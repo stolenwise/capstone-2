@@ -1,0 +1,52 @@
+/* Wrap the page and center the title */
+.LoginPage {
+    margin: 10vh auto 0;
+    padding: 24px;
+    max-width: 520px;           /* keeps the form compact and centered */
+    color: #fff;
+    text-align: center;
+  }
+  
+  /* Make the FORM a vertical, centered stack */
+  .LoginForm {
+    display: flex !important;   /* override any global grid/flex */
+    flex-direction: column !important;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  /* Make inputs full width of the form */
+  .LoginForm input {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: 44px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 3px solid rgba(0, 0, 0, 0.35);
+    background: rgba(255,255,255,.9);
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* Button matches input width and is centered */
+  .LoginBtn {
+    width: 100%;
+    max-width: 520px;
+    height: 46px;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+    transition: all 0.2s ease-in-out;
+}
+
+.LoginBtn:hover {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+  

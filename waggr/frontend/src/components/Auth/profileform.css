@@ -1,0 +1,60 @@
+.ProfilePage {
+    margin: 24px auto 40px !important;
+
+    max-width: 520px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .ProfilePage h3 {
+    margin: 8px 0 18px !important;
+  }
+
+  main {
+    padding-top: 50px !important;
+  }
+  
+
+  .ProfileForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .ProfileForm input {
+    height: 44px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 3px solid rgba(0,0,0,.35);
+    background: rgba(255,255,255,.9);
+    color: #333;
+    font-size: 16px;
+  }
+
+  .ProfileForm-container {
+    margin-top: 2rem; /* Reduce this value to move it up */
+  }
+  
+  .ProfileBtn {
+    width: 100%;
+    max-width: 520px;
+    height: 46px;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #000000;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.ProfileBtn:hover {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+  
+  .form-saved { color: #16a34a; font-weight: 600; }
+  

@@ -1,0 +1,53 @@
+/* Wrap the page and center the title */
+.SignupPage {
+  margin: 10vh auto 0;
+  padding: 24px;
+  max-width: 520px;           /* keeps the form compact and centered */
+  color: #fff;
+  text-align: center;
+}
+
+/* Make the FORM a vertical, centered stack */
+.SignupForm {
+  display: flex !important;   /* override any global grid/flex */
+  flex-direction: column !important;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Make inputs full width of the form */
+.SignupForm input {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 3px solid rgba(0, 0, 0, 0.35);
+  background: rgba(255,255,255,.9);
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 10px; /* <-- adds space between fields */
+}
+
+/* Button matches input width and is centered */
+.SignupBtn {
+  width: 100%;
+  max-width: 520px;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.SignupBtn:hover {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}

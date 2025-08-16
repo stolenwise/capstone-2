@@ -1,0 +1,50 @@
+.ProfileViewPage {
+    margin: 40px auto;
+    max-width: 520px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .ProfileCard {
+    margin: 16px auto 20px;
+    padding: 16px;
+    background: rgba(255,255,255,.9);
+    border: 3px solid rgba(0,0,0,.35);
+    border-radius: 12px;
+    color: #333;
+  }
+  
+  .ProfileCard .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  .ProfileCard .row:last-child { border-bottom: none; }
+  
+  .ProfileCard .label {
+    font-weight: 600;
+    color: #111;
+  }
+  
+  .EditProfileBtn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #000000;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.EditProfileBtn:hover {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+  

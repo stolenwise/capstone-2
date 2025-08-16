@@ -1,0 +1,76 @@
+.Navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    font-family: sans-serif;
+  }
+  
+  .Navbar-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+    border: 2px solid royalblue;
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+  
+  .Navbar-right {
+    display: flex;
+    gap: 25px;
+  }
+  
+  .Navbar-right a {
+    text-decoration: none;
+    color: #555;
+    font-size: 18px;
+    transition: color 0.3s;
+  }
+  
+  .Navbar-right a:hover {
+    color: #000;
+  }
+
+  .Navbar-user {
+    display: flex;
+    align-items: center;  /* vertically centers text and button */
+    gap: 10px;            /* space between greeting and button */
+  }
+  
+  /* Style for the greeting text */
+.Navbar-greeting {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000000;
+}
+
+/* Style for the logout button */
+.Navbar-logout {
+  background: transparent;
+  border: 1px solid #888;
+  border-radius: 6px;
+
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.Navbar-logout:hover {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.username-link {
+  text-decoration: underline !important;
+  color: #2563eb; /* keeps original color */
+}
+
+.username-link:hover {
+  text-decoration: none; /* optional: remove underline on hover */
+}

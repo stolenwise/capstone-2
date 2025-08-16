@@ -141,7 +141,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
-      applications: [testJobIds[0]],
+      bookings: [testJobIds[0]],
     });
   });
 
@@ -166,18 +166,18 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let job = await User.update("u1", updateData);
-    expect(job).toEqual({
+    let dog = await User.update("u1", updateData);
+    expect(dog).toEqual({
       username: "u1",
       ...updateData,
     });
   });
 
   test("works: set password", async function () {
-    let job = await User.update("u1", {
+    let dog = await User.update("u1", {
       password: "new",
     });
-    expect(job).toEqual({
+    expect(dog).toEqual({
       username: "u1",
       firstName: "U1F",
       lastName: "U1L",
@@ -231,23 +231,23 @@ describe("remove", function () {
   });
 });
 
-/************************************** applyToJob */
+/************************************** bookDog */
 
-describe("applyToJob", function () {
+describe("bookDog", function () {
   test("works", async function () {
-    await User.applyToJob("u1", testJobIds[1]);
+    await User.bookDog("u1", testJobIds[1]);
 
     const res = await db.query(
-        "SELECT * FROM applications WHERE job_id=$1", [testJobIds[1]]);
+        "SELECT * FROM bookings WHERE dog_id=$1", [testJobIds[1]]);
     expect(res.rows).toEqual([{
-      job_id: testJobIds[1],
+      dog_id: testJobIds[1],
       username: "u1",
     }]);
   });
 
-  test("not found if no such job", async function () {
+  test("not found if no such dog", async function () {
     try {
-      await User.applyToJob("u1", 0, "applied");
+      await User.bookDog("u1", 0, "applied");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -256,7 +256,7 @@ describe("applyToJob", function () {
 
   test("not found if no such user", async function () {
     try {
-      await User.applyToJob("nope", testJobIds[0], "applied");
+      await User.bookDog("nope", testJobIds[0], "applied");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

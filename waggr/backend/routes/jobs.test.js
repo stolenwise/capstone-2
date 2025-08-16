@@ -19,14 +19,14 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-/************************************** POST /jobs */
+/************************************** POST /dogs */
 
-describe("POST /jobs", function () {
+describe("POST /dogs", function () {
   test("ok for admin", async function () {
     const resp = await request(app)
-        .post(`/jobs`)
+        .post(`/dogs`)
         .send({
-          companyHandle: "c1",
+          shelterHandle: "c1",
           title: "J-new",
           salary: 10,
           equity: "0.2",
@@ -34,21 +34,21 @@ describe("POST /jobs", function () {
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
-      job: {
+      dog: {
         id: expect.any(Number),
         title: "J-new",
         salary: 10,
         equity: "0.2",
-        companyHandle: "c1",
+        shelterHandle: "c1",
       },
     });
   });
 
   test("unauth for users", async function () {
     const resp = await request(app)
-        .post(`/jobs`)
+        .post(`/dogs`)
         .send({
-          companyHandle: "c1",
+          shelterHandle: "c1",
           title: "J-new",
           salary: 10,
           equity: "0.2",
@@ -59,9 +59,9 @@ describe("POST /jobs", function () {
 
   test("bad request with missing data", async function () {
     const resp = await request(app)
-        .post(`/jobs`)
+        .post(`/dogs`)
         .send({
-          companyHandle: "c1",
+          shelterHandle: "c1",
         })
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
@@ -69,9 +69,9 @@ describe("POST /jobs", function () {
 
   test("bad request with invalid data", async function () {
     const resp = await request(app)
-        .post(`/jobs`)
+        .post(`/dogs`)
         .send({
-          companyHandle: "c1",
+          shelterHandle: "c1",
           title: "J-new",
           salary: "not-a-number",
           equity: "0.2",
@@ -82,36 +82,36 @@ describe("POST /jobs", function () {
 
 });
 
-/************************************** GET /jobs */
+/************************************** GET /dogs */
 
-describe("GET /jobs", function () {
+describe("GET /dogs", function () {
   test("ok for anon", async function () {
-    const resp = await request(app).get(`/jobs`);
+    const resp = await request(app).get(`/dogs`);
     expect(resp.body).toEqual({
-          jobs: [
+          dogs: [
             {
               id: expect.any(Number),
               title: "J1",
               salary: 1,
               equity: "0.1",
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
             {
               id: expect.any(Number),
               title: "J2",
               salary: 2,
               equity: "0.2",
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
             {
               id: expect.any(Number),
               title: "J3",
               salary: 3,
               equity: null,
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
           ],
         },
@@ -120,25 +120,25 @@ describe("GET /jobs", function () {
 
   test("works: filtering", async function () {
     const resp = await request(app)
-        .get(`/jobs`)
+        .get(`/dogs`)
         .query({ hasEquity: true });
     expect(resp.body).toEqual({
-          jobs: [
+          dogs: [
             {
               id: expect.any(Number),
               title: "J1",
               salary: 1,
               equity: "0.1",
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
             {
               id: expect.any(Number),
               title: "J2",
               salary: 2,
               equity: "0.2",
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
           ],
         },
@@ -147,17 +147,17 @@ describe("GET /jobs", function () {
 
   test("works: filtering on 2 filters", async function () {
     const resp = await request(app)
-        .get(`/jobs`)
+        .get(`/dogs`)
         .query({ minSalary: 2, title: "3" });
     expect(resp.body).toEqual({
-          jobs: [
+          dogs: [
             {
               id: expect.any(Number),
               title: "J3",
               salary: 3,
               equity: null,
-              companyHandle: "c1",
-              companyName: "C1",
+              shelterHandle: "c1",
+              shelterName: "C1",
             },
           ],
         },
@@ -166,24 +166,24 @@ describe("GET /jobs", function () {
 
   test("bad request on invalid filter key", async function () {
     const resp = await request(app)
-        .get(`/jobs`)
+        .get(`/dogs`)
         .query({ minSalary: 2, nope: "nope" });
     expect(resp.statusCode).toEqual(400);
   });
 });
 
-/************************************** GET /jobs/:id */
+/************************************** GET /dogs/:id */
 
-describe("GET /jobs/:id", function () {
+describe("GET /dogs/:id", function () {
   test("works for anon", async function () {
-    const resp = await request(app).get(`/jobs/${testJobIds[0]}`);
+    const resp = await request(app).get(`/dogs/${testJobIds[0]}`);
     expect(resp.body).toEqual({
-      job: {
+      dog: {
         id: testJobIds[0],
         title: "J1",
         salary: 1,
         equity: "0.1",
-        company: {
+        shelter: {
           handle: "c1",
           name: "C1",
           description: "Desc1",
@@ -194,36 +194,36 @@ describe("GET /jobs/:id", function () {
     });
   });
 
-  test("not found for no such job", async function () {
-    const resp = await request(app).get(`/jobs/0`);
+  test("not found for no such dog", async function () {
+    const resp = await request(app).get(`/dogs/0`);
     expect(resp.statusCode).toEqual(404);
   });
 });
 
-/************************************** PATCH /jobs/:id */
+/************************************** PATCH /dogs/:id */
 
-describe("PATCH /jobs/:id", function () {
+describe("PATCH /dogs/:id", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .patch(`/jobs/${testJobIds[0]}`)
+        .patch(`/dogs/${testJobIds[0]}`)
         .send({
           title: "J-New",
         })
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
-      job: {
+      dog: {
         id: expect.any(Number),
         title: "J-New",
         salary: 1,
         equity: "0.1",
-        companyHandle: "c1",
+        shelterHandle: "c1",
       },
     });
   });
 
   test("unauth for others", async function () {
     const resp = await request(app)
-        .patch(`/jobs/${testJobIds[0]}`)
+        .patch(`/dogs/${testJobIds[0]}`)
         .send({
           title: "J-New",
         })
@@ -231,9 +231,9 @@ describe("PATCH /jobs/:id", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("not found on no such job", async function () {
+  test("not found on no such dog", async function () {
     const resp = await request(app)
-        .patch(`/jobs/0`)
+        .patch(`/dogs/0`)
         .send({
           handle: "new",
         })
@@ -243,7 +243,7 @@ describe("PATCH /jobs/:id", function () {
 
   test("bad request on handle change attempt", async function () {
     const resp = await request(app)
-        .patch(`/jobs/${testJobIds[0]}`)
+        .patch(`/dogs/${testJobIds[0]}`)
         .send({
           handle: "new",
         })
@@ -253,7 +253,7 @@ describe("PATCH /jobs/:id", function () {
 
   test("bad request with invalid data", async function () {
     const resp = await request(app)
-        .patch(`/jobs/${testJobIds[0]}`)
+        .patch(`/dogs/${testJobIds[0]}`)
         .send({
           salary: "not-a-number",
         })
@@ -262,32 +262,32 @@ describe("PATCH /jobs/:id", function () {
   });
 });
 
-/************************************** DELETE /jobs/:id */
+/************************************** DELETE /dogs/:id */
 
-describe("DELETE /jobs/:id", function () {
+describe("DELETE /dogs/:id", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .delete(`/jobs/${testJobIds[0]}`)
+        .delete(`/dogs/${testJobIds[0]}`)
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({ deleted: testJobIds[0] });
   });
 
   test("unauth for others", async function () {
     const resp = await request(app)
-        .delete(`/jobs/${testJobIds[0]}`)
+        .delete(`/dogs/${testJobIds[0]}`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
     const resp = await request(app)
-        .delete(`/jobs/${testJobIds[0]}`);
+        .delete(`/dogs/${testJobIds[0]}`);
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("not found for no such job", async function () {
+  test("not found for no such dog", async function () {
     const resp = await request(app)
-        .delete(`/jobs/0`)
+        .delete(`/dogs/0`)
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
   });

@@ -1,0 +1,30 @@
+.JobCard { 
+    background:#fff; 
+    border:1px solid #eee; 
+    border-radius:8px; 
+    padding:1rem; 
+    margin:.75rem 0; 
+    box-shadow:0 2px 6px rgba(0,0,0,.05); 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+}
+.ApplyBtn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 700;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+  }
+  .ApplyBtn.is-applied,
+  .ApplyBtn:disabled {
+    background: #94a3b8;
+    cursor: default;
+  }
+  
+  /* ensure the title link doesn’t overlay the button */
+  .JobCard h3 a { display: inline; position: relative; z-index: 1; }
+  .ApplyBtn { position: relative; z-index: 2; }
+  

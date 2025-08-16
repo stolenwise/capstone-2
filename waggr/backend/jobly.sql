@@ -1,18 +1,18 @@
-\echo 'Delete and recreate jobly db?'
+\echo 'Delete and recreate dogly db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
 
-DROP DATABASE jobly;
-CREATE DATABASE jobly;
-\connect jobly
+DROP DATABASE dogly;
+CREATE DATABASE dogly;
+\connect dogly
 
-\i jobly-schema.sql
-\i jobly-seed.sql
+\i dogly-schema.sql
+\i dogly-seed.sql
 
-\echo 'Delete and recreate jobly_test db?'
+\echo 'Delete and recreate dogly_test db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
 
-DROP DATABASE jobly_test;
-CREATE DATABASE jobly_test;
-\connect jobly_test
+DROP DATABASE dogly_test;
+CREATE DATABASE dogly_test;
+\connect dogly_test
 
-\i jobly-schema.sql
+\i dogly-schema.sql

@@ -2,8 +2,8 @@
 
 const db = require("../db.js");
 const User = require("../models/user");
-const Company = require("../models/company");
-const Job = require("../models/job");
+const Company = require("../models/shelter");
+const Job = require("../models/dog");
 const { createToken } = require("../helpers/tokens");
 
 const testJobIds = [];
@@ -12,7 +12,7 @@ async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM companies");
+  await db.query("DELETE FROM shelters");
 
   await Company.create(
       {
@@ -40,11 +40,11 @@ async function commonBeforeAll() {
       });
 
   testJobIds[0] = (await Job.create(
-      { title: "J1", salary: 1, equity: "0.1", companyHandle: "c1" })).id;
+      { title: "J1", salary: 1, equity: "0.1", shelterHandle: "c1" })).id;
   testJobIds[1] = (await Job.create(
-      { title: "J2", salary: 2, equity: "0.2", companyHandle: "c1" })).id;
+      { title: "J2", salary: 2, equity: "0.2", shelterHandle: "c1" })).id;
   testJobIds[2] = (await Job.create(
-      { title: "J3", salary: 3, /* equity null */ companyHandle: "c1" })).id;
+      { title: "J3", salary: 3, /* equity null */ shelterHandle: "c1" })).id;
 
   await User.register({
     username: "u1",
@@ -71,7 +71,7 @@ async function commonBeforeAll() {
     isAdmin: false,
   });
 
-  await User.applyToJob("u1", testJobIds[0]);
+  await User.bookDog("u1", testJobIds[0]);
 }
 
 async function commonBeforeEach() {

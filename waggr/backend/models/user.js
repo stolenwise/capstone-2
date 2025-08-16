@@ -117,8 +117,8 @@ class User {
 
   /** Given a username, return data about user.
    *
-   * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
+   * Returns { username, first_name, last_name, is_admin, dogs }
+   *   where dogs is { id, title, shelter_handle, shelter_name, state }
    *
    * Throws NotFoundError if user not found.
    **/
@@ -140,11 +140,11 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
 
     const userApplicationsRes = await db.query(
-          `SELECT a.job_id
-           FROM applications AS a
+          `SELECT a.dog_id
+           FROM bookings AS a
            WHERE a.username = $1`, [username]);
 
-    user.applications = userApplicationsRes.rows.map(a => a.job_id);
+    user.bookings = userApplicationsRes.rows.map(a => a.dog_id);
     return user;
   }
 
@@ -211,20 +211,20 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
-  /** Apply for job: update db, returns undefined.
+  /** Apply for dog: update db, returns undefined.
    *
-   * - username: username applying for job
-   * - jobId: job id
+   * - username: username applying for dog
+   * - dogId: dog id
    **/
 
-  static async applyToJob(username, jobId) {
+  static async bookDog(username, dogId) {
     const preCheck = await db.query(
           `SELECT id
-           FROM jobs
-           WHERE id = $1`, [jobId]);
-    const job = preCheck.rows[0];
+           FROM dogs
+           WHERE id = $1`, [dogId]);
+    const dog = preCheck.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${jobId}`);
+    if (!dog) throw new NotFoundError(`No dog: ${dogId}`);
 
     const preCheck2 = await db.query(
           `SELECT username
@@ -235,9 +235,9 @@ class User {
     if (!user) throw new NotFoundError(`No username: ${username}`);
 
     await db.query(
-          `INSERT INTO applications (job_id, username)
+          `INSERT INTO bookings (dog_id, username)
            VALUES ($1, $2)`,
-        [jobId, username]);
+        [dogId, username]);
   }
 }
 

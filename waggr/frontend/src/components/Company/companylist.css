@@ -1,0 +1,21 @@
+.company-list {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .company-list li {
+    margin: 15px 0;
+  }
+  
+  .company-list a {
+    font-size: 18px;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .company-list a:hover {
+    text-decoration: underline;
+  }
+  

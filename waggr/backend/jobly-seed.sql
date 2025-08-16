@@ -14,7 +14,7 @@ VALUES ('testuser',
         'joel@joelburton.com',
         TRUE);
 
-INSERT INTO companies (handle,
+INSERT INTO shelters (handle,
                        name,
                        num_employees,
                        description,
@@ -70,7 +70,7 @@ VALUES ('bauer-gallagher', 'Bauer-Gallagher', 862,
         'Own once artist part put authority wait. Focus free even. Why friend civil visit.',
         NULL),
        ('taylor-yu-lee', 'Taylor, Yu and Lee', 226,
-        'Down bag serve. Officer season company.', '/logos/logo2.png'),
+        'Down bag serve. Officer season shelter.', '/logos/logo2.png'),
        ('scott-smith', 'Scott-Smith', 993,
         'Room newspaper foot. Student daughter their themselves top almost near. Wait time recently it street follow medical nothing.',
         '/logos/logo2.png'),
@@ -161,7 +161,7 @@ VALUES ('bauer-gallagher', 'Bauer-Gallagher', 862,
        ('weber-hernandez', 'Weber-Hernandez', 681,
         'Contain product south picture scientist.', '/logos/logo4.png');
 
-INSERT INTO jobs (title, salary, equity, company_handle)
+INSERT INTO dogs (title, salary, equity, shelter_handle)
 VALUES ('Conservator, furniture', 110000, 0, 'watson-davis'),
        ('Information officer', 200000, 0, 'hall-mills'),
        ('Consulting civil engineer', 60000, 0, 'sellers-bryant'),

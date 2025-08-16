@@ -63,8 +63,8 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin, jobs }
- *   where jobs is { id, title, companyHandle, companyName, state }
+ * Returns { username, firstName, lastName, isAdmin, dogs }
+ *   where dogs is { id, title, shelterHandle, shelterName, state }
  *
  * Authorization required: admin or same user-as-:username
  **/
@@ -120,18 +120,18 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, 
 });
 
 
-/** POST /[username]/jobs/[id]  { state } => { application }
+/** POST /[username]/dogs/[id]  { state } => { booking }
  *
- * Returns {"applied": jobId}
+ * Returns {"applied": dogId}
  *
  * Authorization required: admin or same-user-as-:username
  * */
 
-router.post("/:username/jobs/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+router.post("/:username/dogs/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
-    const jobId = +req.params.id;
-    await User.applyToJob(req.params.username, jobId);
-    return res.json({ applied: jobId });
+    const dogId = +req.params.id;
+    await User.bookDog(req.params.username, dogId);
+    return res.json({ applied: dogId });
   } catch (err) {
     return next(err);
   }

@@ -1,0 +1,12 @@
+.CompanyDetail {
+    padding: 20px;
+  }
+  
+  .CompanyDetail h2 {
+    margin-bottom: 10px;
+  }
+  
+  .CompanyDetail ul {
+    list-style: none;
+    padding: 0;
+  }

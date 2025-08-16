@@ -1,24 +1,24 @@
 "use strict";
 
-/** Routes for companies. */
+/** Routes for shelters. */
 
 const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const Company = require("../models/company");
+const Company = require("../models/shelter");
 
-const companyNewSchema = require("../schemas/companyNew.json");
-const companyUpdateSchema = require("../schemas/companyUpdate.json");
-const companySearchSchema = require("../schemas/companySearch.json");
+const shelterNewSchema = require("../schemas/shelterNew.json");
+const shelterUpdateSchema = require("../schemas/shelterUpdate.json");
+const shelterSearchSchema = require("../schemas/shelterSearch.json");
 
 const router = new express.Router();
 
 
-/** POST / { company } =>  { company }
+/** POST / { shelter } =>  { shelter }
  *
- * company should be { handle, name, description, numEmployees, logoUrl }
+ * shelter should be { handle, name, description, numEmployees, logoUrl }
  *
  * Returns { handle, name, description, numEmployees, logoUrl }
  *
@@ -27,21 +27,21 @@ const router = new express.Router();
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, companyNewSchema);
+    const validator = jsonschema.validate(req.body, shelterNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const company = await Company.create(req.body);
-    return res.status(201).json({ company });
+    const shelter = await Company.create(req.body);
+    return res.status(201).json({ shelter });
   } catch (err) {
     return next(err);
   }
 });
 
 /** GET /  =>
- *   { companies: [ { handle, name, description, numEmployees, logoUrl }, ...] }
+ *   { shelters: [ { handle, name, description, numEmployees, logoUrl }, ...] }
  *
  * Can filter on provided search filters:
  * - minEmployees
@@ -58,39 +58,39 @@ router.get("/", async function (req, res, next) {
   if (q.maxEmployees !== undefined) q.maxEmployees = +q.maxEmployees;
 
   try {
-    const validator = jsonschema.validate(q, companySearchSchema);
+    const validator = jsonschema.validate(q, shelterSearchSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const companies = await Company.findAll(q);
-    return res.json({ companies });
+    const shelters = await Company.findAll(q);
+    return res.json({ shelters });
   } catch (err) {
     return next(err);
   }
 });
 
-/** GET /[handle]  =>  { company }
+/** GET /[handle]  =>  { shelter }
  *
- *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
- *   where jobs is [{ id, title, salary, equity }, ...]
+ *  Company is { handle, name, description, numEmployees, logoUrl, dogs }
+ *   where dogs is [{ id, title, salary, equity }, ...]
  *
  * Authorization required: none
  */
 
 router.get("/:handle", async function (req, res, next) {
   try {
-    const company = await Company.get(req.params.handle);
-    return res.json({ company });
+    const shelter = await Company.get(req.params.handle);
+    return res.json({ shelter });
   } catch (err) {
     return next(err);
   }
 });
 
-/** PATCH /[handle] { fld1, fld2, ... } => { company }
+/** PATCH /[handle] { fld1, fld2, ... } => { shelter }
  *
- * Patches company data.
+ * Patches shelter data.
  *
  * fields can be: { name, description, numEmployees, logo_url }
  *
@@ -101,14 +101,14 @@ router.get("/:handle", async function (req, res, next) {
 
 router.patch("/:handle", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, companyUpdateSchema);
+    const validator = jsonschema.validate(req.body, shelterUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
 
-    const company = await Company.update(req.params.handle, req.body);
-    return res.json({ company });
+    const shelter = await Company.update(req.params.handle, req.body);
+    return res.json({ shelter });
   } catch (err) {
     return next(err);
   }

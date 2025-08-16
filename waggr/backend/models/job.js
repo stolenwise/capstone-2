@@ -5,43 +5,43 @@ const { NotFoundError} = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 
-/** Related functions for companies. */
+/** Related functions for shelters. */
 
 class Job {
-  /** Create a job (from data), update db, return new job data.
+  /** Create a dog (from data), update db, return new dog data.
    *
-   * data should be { title, salary, equity, companyHandle }
+   * data should be { title, salary, equity, shelterHandle }
    *
-   * Returns { id, title, salary, equity, companyHandle }
+   * Returns { id, title, salary, equity, shelterHandle }
    **/
 
   static async create(data) {
     const result = await db.query(
-          `INSERT INTO jobs (title,
+          `INSERT INTO dogs (title,
                              salary,
                              equity,
-                             company_handle)
+                             shelter_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
+           RETURNING id, title, salary, equity, shelter_handle AS "shelterHandle"`,
         [
           data.title,
           data.salary,
           data.equity,
-          data.companyHandle,
+          data.shelterHandle,
         ]);
-    let job = result.rows[0];
+    let dog = result.rows[0];
 
-    return job;
+    return dog;
   }
 
-  /** Find all jobs (optional filter on searchFilters).
+  /** Find all dogs (optional filter on searchFilters).
    *
    * searchFilters (all optional):
    * - minSalary
-   * - hasEquity (true returns only jobs with equity > 0, other values ignored)
+   * - hasEquity (true returns only dogs with equity > 0, other values ignored)
    * - title (will find case-insensitive, partial matches)
    *
-   * Returns [{ id, title, salary, equity, companyHandle, companyName }, ...]
+   * Returns [{ id, title, salary, equity, shelterHandle, shelterName }, ...]
    * */
 
   static async findAll({ minSalary, hasEquity, title } = {}) {
@@ -49,10 +49,10 @@ class Job {
                         j.title,
                         j.salary,
                         j.equity,
-                        j.company_handle AS "companyHandle",
-                        c.name AS "companyName"
-                 FROM jobs j 
-                   LEFT JOIN companies AS c ON c.handle = j.company_handle`;
+                        j.shelter_handle AS "shelterHandle",
+                        c.name AS "shelterName"
+                 FROM dogs j 
+                   LEFT JOIN shelters AS c ON c.handle = j.shelter_handle`;
     let whereExpressions = [];
     let queryValues = [];
 
@@ -80,55 +80,55 @@ class Job {
     // Finalize query and return results
 
     query += " ORDER BY title";
-    const jobsRes = await db.query(query, queryValues);
-    return jobsRes.rows;
+    const dogsRes = await db.query(query, queryValues);
+    return dogsRes.rows;
   }
 
-  /** Given a job id, return data about job.
+  /** Given a dog id, return data about dog.
    *
-   * Returns { id, title, salary, equity, companyHandle, company }
-   *   where company is { handle, name, description, numEmployees, logoUrl }
+   * Returns { id, title, salary, equity, shelterHandle, shelter }
+   *   where shelter is { handle, name, description, numEmployees, logoUrl }
    *
    * Throws NotFoundError if not found.
    **/
 
   static async get(id) {
-    const jobRes = await db.query(
+    const dogRes = await db.query(
           `SELECT id,
                   title,
                   salary,
                   equity,
-                  company_handle AS "companyHandle"
-           FROM jobs
+                  shelter_handle AS "shelterHandle"
+           FROM dogs
            WHERE id = $1`, [id]);
 
-    const job = jobRes.rows[0];
+    const dog = dogRes.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
+    if (!dog) throw new NotFoundError(`No dog: ${id}`);
 
-    const companiesRes = await db.query(
+    const sheltersRes = await db.query(
           `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`, [job.companyHandle]);
+           FROM shelters
+           WHERE handle = $1`, [dog.shelterHandle]);
 
-    delete job.companyHandle;
-    job.company = companiesRes.rows[0];
+    delete dog.shelterHandle;
+    dog.shelter = sheltersRes.rows[0];
 
-    return job;
+    return dog;
   }
 
-  /** Update job data with `data`.
+  /** Update dog data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain
    * all the fields; this only changes provided ones.
    *
    * Data can include: { title, salary, equity }
    *
-   * Returns { id, title, salary, equity, companyHandle }
+   * Returns { id, title, salary, equity, shelterHandle }
    *
    * Throws NotFoundError if not found.
    */
@@ -139,36 +139,36 @@ class Job {
         {});
     const idVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE jobs 
+    const querySql = `UPDATE dogs 
                       SET ${setCols} 
                       WHERE id = ${idVarIdx} 
                       RETURNING id, 
                                 title, 
                                 salary, 
                                 equity,
-                                company_handle AS "companyHandle"`;
+                                shelter_handle AS "shelterHandle"`;
     const result = await db.query(querySql, [...values, id]);
-    const job = result.rows[0];
+    const dog = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
+    if (!dog) throw new NotFoundError(`No dog: ${id}`);
 
-    return job;
+    return dog;
   }
 
-  /** Delete given job from database; returns undefined.
+  /** Delete given dog from database; returns undefined.
    *
-   * Throws NotFoundError if company not found.
+   * Throws NotFoundError if shelter not found.
    **/
 
   static async remove(id) {
     const result = await db.query(
           `DELETE
-           FROM jobs
+           FROM dogs
            WHERE id = $1
            RETURNING id`, [id]);
-    const job = result.rows[0];
+    const dog = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${id}`);
+    if (!dog) throw new NotFoundError(`No dog: ${id}`);
   }
 }
 

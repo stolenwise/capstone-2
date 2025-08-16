@@ -1,0 +1,47 @@
+.CompanyCard {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 1rem 0;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .CompanyCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .CompanyCard-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .CompanyCard-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .CompanyCard-text {
+    flex-grow: 1;
+  }
+  
+  .CompanyCard h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .CompanyCard p {
+    margin: 0;
+    color: #555;
+  }
+  
+  .CompanyCard-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-left: 1rem;
+  }
+  

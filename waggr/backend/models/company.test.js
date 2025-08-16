@@ -2,7 +2,7 @@
 
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const Company = require("./company.js");
+const Company = require("./shelter.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -28,12 +28,12 @@ describe("create", function () {
   };
 
   test("works", async function () {
-    let company = await Company.create(newCompany);
-    expect(company).toEqual(newCompany);
+    let shelter = await Company.create(newCompany);
+    expect(shelter).toEqual(newCompany);
 
     const result = await db.query(
           `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
+           FROM shelters
            WHERE handle = 'new'`);
     expect(result.rows).toEqual([
       {
@@ -61,8 +61,8 @@ describe("create", function () {
 
 describe("findAll", function () {
   test("works: all", async function () {
-    let companies = await Company.findAll();
-    expect(companies).toEqual([
+    let shelters = await Company.findAll();
+    expect(shelters).toEqual([
       {
         handle: "c1",
         name: "C1",
@@ -88,8 +88,8 @@ describe("findAll", function () {
   });
 
   test("works: by min employees", async function () {
-    let companies = await Company.findAll({ minEmployees: 2 });
-    expect(companies).toEqual([
+    let shelters = await Company.findAll({ minEmployees: 2 });
+    expect(shelters).toEqual([
       {
         handle: "c2",
         name: "C2",
@@ -108,8 +108,8 @@ describe("findAll", function () {
   });
 
   test("works: by max employees", async function () {
-    let companies = await Company.findAll({ maxEmployees: 2 });
-    expect(companies).toEqual([
+    let shelters = await Company.findAll({ maxEmployees: 2 });
+    expect(shelters).toEqual([
       {
         handle: "c1",
         name: "C1",
@@ -128,9 +128,9 @@ describe("findAll", function () {
   });
 
   test("works: by min-max employees", async function () {
-    let companies = await Company.findAll(
+    let shelters = await Company.findAll(
         { minEmployees: 1, maxEmployees: 1 });
-    expect(companies).toEqual([
+    expect(shelters).toEqual([
       {
         handle: "c1",
         name: "C1",
@@ -142,8 +142,8 @@ describe("findAll", function () {
   });
 
   test("works: by name", async function () {
-    let companies = await Company.findAll({ name: "1" });
-    expect(companies).toEqual([
+    let shelters = await Company.findAll({ name: "1" });
+    expect(shelters).toEqual([
       {
         handle: "c1",
         name: "C1",
@@ -155,8 +155,8 @@ describe("findAll", function () {
   });
 
   test("works: empty list on nothing found", async function () {
-    let companies = await Company.findAll({ name: "nope" });
-    expect(companies).toEqual([]);
+    let shelters = await Company.findAll({ name: "nope" });
+    expect(shelters).toEqual([]);
   });
 
   test("bad request if invalid min > max", async function () {
@@ -173,14 +173,14 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let company = await Company.get("c1");
-    expect(company).toEqual({
+    let shelter = await Company.get("c1");
+    expect(shelter).toEqual({
       handle: "c1",
       name: "C1",
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
-      jobs: [
+      dogs: [
         { id: testJobIds[0], title: "Job1", salary: 100, equity: "0.1" },
         { id: testJobIds[1], title: "Job2", salary: 200, equity: "0.2" },
         { id: testJobIds[2], title: "Job3", salary: 300, equity: "0" },
@@ -189,7 +189,7 @@ describe("get", function () {
     });
   });
 
-  test("not found if no such company", async function () {
+  test("not found if no such shelter", async function () {
     try {
       await Company.get("nope");
       fail();
@@ -210,15 +210,15 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let company = await Company.update("c1", updateData);
-    expect(company).toEqual({
+    let shelter = await Company.update("c1", updateData);
+    expect(shelter).toEqual({
       handle: "c1",
       ...updateData,
     });
 
     const result = await db.query(
           `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
+           FROM shelters
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
       handle: "c1",
@@ -237,15 +237,15 @@ describe("update", function () {
       logoUrl: null,
     };
 
-    let company = await Company.update("c1", updateDataSetNulls);
-    expect(company).toEqual({
+    let shelter = await Company.update("c1", updateDataSetNulls);
+    expect(shelter).toEqual({
       handle: "c1",
       ...updateDataSetNulls,
     });
 
     const result = await db.query(
           `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
+           FROM shelters
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
       handle: "c1",
@@ -256,7 +256,7 @@ describe("update", function () {
     }]);
   });
 
-  test("not found if no such company", async function () {
+  test("not found if no such shelter", async function () {
     try {
       await Company.update("nope", updateData);
       fail();
@@ -281,11 +281,11 @@ describe("remove", function () {
   test("works", async function () {
     await Company.remove("c1");
     const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
+        "SELECT handle FROM shelters WHERE handle='c1'");
     expect(res.rows.length).toEqual(0);
   });
 
-  test("not found if no such company", async function () {
+  test("not found if no such shelter", async function () {
     try {
       await Company.remove("nope");
       fail();

@@ -1,6 +1,6 @@
 "use strict";
 
-/** Express app for jobly. */
+/** Express app for dogly. */
 
 const express = require("express");
 const cors = require("cors");
@@ -9,9 +9,9 @@ const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
-const companiesRoutes = require("./routes/companies");
+const sheltersRoutes = require("./routes/shelters");
 const usersRoutes = require("./routes/users");
-const jobsRoutes = require("./routes/jobs");
+const dogsRoutes = require("./routes/dogs");
 
 const morgan = require("morgan");
 
@@ -23,9 +23,9 @@ app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
-app.use("/companies", companiesRoutes);
+app.use("/shelters", sheltersRoutes);
 app.use("/users", usersRoutes);
-app.use("/jobs", jobsRoutes);
+app.use("/dogs", dogsRoutes);
 
 
 /** Handle 404 errors -- this matches everything */
