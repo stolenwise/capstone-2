@@ -3,7 +3,8 @@ import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-mo
 import DoglyApi from "../api";
 
 const CARD_W = 320;
-const CARD_H = 440;
+const CARD_H = 520;          // give the whole card more vertical room
+const IMG_H  = 320;          // photo height for compact card
 const PAGE_SIZE = 12;
 const SWIPE_THRESHOLD = 120;
 
@@ -200,7 +201,7 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
     alt={card.name}
     style={{
       width: "100%",
-      height: 220,
+      height: IMG_H,
       objectFit: "cover",
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12
@@ -305,7 +306,7 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
                 <img
                   src={photos[photoIndex]}
                   alt={card.name}
-                  style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }}
+                  style={{ width: "100%", height: IMG_H + 40, objectFit: "cover", display: "block" }}
                 />
                 {photos.length > 1 && (
                   <>
