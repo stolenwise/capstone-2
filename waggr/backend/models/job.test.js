@@ -2,13 +2,13 @@
 
 const { NotFoundError, BadRequestError } = require("../expressError");
 const db = require("../db.js");
-const Job = require("./dog.js");
+const Dog = require("./dog.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -19,7 +19,7 @@ afterAll(commonAfterAll);
 /************************************** create */
 
 describe("create", function () {
-  let newJob = {
+  let newDog = {
     shelterHandle: "c1",
     title: "Test",
     salary: 100,
@@ -27,9 +27,9 @@ describe("create", function () {
   };
 
   test("works", async function () {
-    let dog = await Job.create(newJob);
+    let dog = await Dog.create(newDog);
     expect(dog).toEqual({
-      ...newJob,
+      ...newDog,
       id: expect.any(Number),
     });
   });
@@ -39,35 +39,35 @@ describe("create", function () {
 
 describe("findAll", function () {
   test("works: no filter", async function () {
-    let dogs = await Job.findAll();
+    let dogs = await Dog.findAll();
     expect(dogs).toEqual([
       {
-        id: testJobIds[0],
-        title: "Job1",
+        id: testDogIds[0],
+        title: "Dog1",
         salary: 100,
         equity: "0.1",
         shelterHandle: "c1",
         shelterName: "C1",
       },
       {
-        id: testJobIds[1],
-        title: "Job2",
+        id: testDogIds[1],
+        title: "Dog2",
         salary: 200,
         equity: "0.2",
         shelterHandle: "c1",
         shelterName: "C1",
       },
       {
-        id: testJobIds[2],
-        title: "Job3",
+        id: testDogIds[2],
+        title: "Dog3",
         salary: 300,
         equity: "0",
         shelterHandle: "c1",
         shelterName: "C1",
       },
       {
-        id: testJobIds[3],
-        title: "Job4",
+        id: testDogIds[3],
+        title: "Dog4",
         salary: null,
         equity: null,
         shelterHandle: "c1",
@@ -77,11 +77,11 @@ describe("findAll", function () {
   });
 
   test("works: by min salary", async function () {
-    let dogs = await Job.findAll({ minSalary: 250 });
+    let dogs = await Dog.findAll({ minSalary: 250 });
     expect(dogs).toEqual([
       {
-        id: testJobIds[2],
-        title: "Job3",
+        id: testDogIds[2],
+        title: "Dog3",
         salary: 300,
         equity: "0",
         shelterHandle: "c1",
@@ -91,19 +91,19 @@ describe("findAll", function () {
   });
 
   test("works: by equity", async function () {
-    let dogs = await Job.findAll({ hasEquity: true });
+    let dogs = await Dog.findAll({ hasEquity: true });
     expect(dogs).toEqual([
       {
-        id: testJobIds[0],
-        title: "Job1",
+        id: testDogIds[0],
+        title: "Dog1",
         salary: 100,
         equity: "0.1",
         shelterHandle: "c1",
         shelterName: "C1",
       },
       {
-        id: testJobIds[1],
-        title: "Job2",
+        id: testDogIds[1],
+        title: "Dog2",
         salary: 200,
         equity: "0.2",
         shelterHandle: "c1",
@@ -113,11 +113,11 @@ describe("findAll", function () {
   });
 
   test("works: by min salary & equity", async function () {
-    let dogs = await Job.findAll({ minSalary: 150, hasEquity: true });
+    let dogs = await Dog.findAll({ minSalary: 150, hasEquity: true });
     expect(dogs).toEqual([
       {
-        id: testJobIds[1],
-        title: "Job2",
+        id: testDogIds[1],
+        title: "Dog2",
         salary: 200,
         equity: "0.2",
         shelterHandle: "c1",
@@ -127,11 +127,11 @@ describe("findAll", function () {
   });
 
   test("works: by name", async function () {
-    let dogs = await Job.findAll({ title: "ob1" });
+    let dogs = await Dog.findAll({ title: "ob1" });
     expect(dogs).toEqual([
       {
-        id: testJobIds[0],
-        title: "Job1",
+        id: testDogIds[0],
+        title: "Dog1",
         salary: 100,
         equity: "0.1",
         shelterHandle: "c1",
@@ -145,10 +145,10 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let dog = await Job.get(testJobIds[0]);
+    let dog = await Dog.get(testDogIds[0]);
     expect(dog).toEqual({
-      id: testJobIds[0],
-      title: "Job1",
+      id: testDogIds[0],
+      title: "Dog1",
       salary: 100,
       equity: "0.1",
       shelter: {
@@ -163,7 +163,7 @@ describe("get", function () {
 
   test("not found if no such dog", async function () {
     try {
-      await Job.get(0);
+      await Dog.get(0);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -180,9 +180,9 @@ describe("update", function () {
     equity: "0.5",
   };
   test("works", async function () {
-    let dog = await Job.update(testJobIds[0], updateData);
+    let dog = await Dog.update(testDogIds[0], updateData);
     expect(dog).toEqual({
-      id: testJobIds[0],
+      id: testDogIds[0],
       shelterHandle: "c1",
       ...updateData,
     });
@@ -190,7 +190,7 @@ describe("update", function () {
 
   test("not found if no such dog", async function () {
     try {
-      await Job.update(0, {
+      await Dog.update(0, {
         title: "test",
       });
       fail();
@@ -201,7 +201,7 @@ describe("update", function () {
 
   test("bad request with no data", async function () {
     try {
-      await Job.update(testJobIds[0], {});
+      await Dog.update(testDogIds[0], {});
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -213,15 +213,15 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Job.remove(testJobIds[0]);
+    await Dog.remove(testDogIds[0]);
     const res = await db.query(
-        "SELECT id FROM dogs WHERE id=$1", [testJobIds[0]]);
+        "SELECT id FROM dogs WHERE id=$1", [testDogIds[0]]);
     expect(res.rows.length).toEqual(0);
   });
 
   test("not found if no such dog", async function () {
     try {
-      await Job.remove(0);
+      await Dog.remove(0);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

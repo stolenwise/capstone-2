@@ -6,7 +6,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for shelters. */
 
-class Company {
+class Shelter {
   /** Create a shelter (from data), update db, return new shelter data.
    *
    * data should be { handle, name, description, numEmployees, logoUrl }
@@ -191,4 +191,4 @@ class Company {
 }
 
 
-module.exports = Company;
+module.exports = Shelter;

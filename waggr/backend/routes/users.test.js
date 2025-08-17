@@ -11,7 +11,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
   u1Token,
   u2Token,
   adminToken,
@@ -201,7 +201,7 @@ describe("GET /users/:username", function () {
         lastName: "U1L",
         email: "user1@user.com",
         isAdmin: false,
-        bookings: [testJobIds[0]],
+        bookings: [testDogIds[0]],
       },
     });
   });
@@ -217,7 +217,7 @@ describe("GET /users/:username", function () {
         lastName: "U1L",
         email: "user1@user.com",
         isAdmin: false,
-        bookings: [testJobIds[0]],
+        bookings: [testDogIds[0]],
       },
     });
   });
@@ -385,34 +385,34 @@ describe("DELETE /users/:username", function () {
 describe("POST /users/:username/dogs/:id", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .post(`/users/u1/dogs/${testJobIds[1]}`)
+        .post(`/users/u1/dogs/${testDogIds[1]}`)
         .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.body).toEqual({ applied: testJobIds[1] });
+    expect(resp.body).toEqual({ applied: testDogIds[1] });
   });
 
   test("works for same user", async function () {
     const resp = await request(app)
-        .post(`/users/u1/dogs/${testJobIds[1]}`)
+        .post(`/users/u1/dogs/${testDogIds[1]}`)
         .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.body).toEqual({ applied: testJobIds[1] });
+    expect(resp.body).toEqual({ applied: testDogIds[1] });
   });
 
   test("unauth for others", async function () {
     const resp = await request(app)
-        .post(`/users/u1/dogs/${testJobIds[1]}`)
+        .post(`/users/u1/dogs/${testDogIds[1]}`)
         .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
     const resp = await request(app)
-        .post(`/users/u1/dogs/${testJobIds[1]}`);
+        .post(`/users/u1/dogs/${testDogIds[1]}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("not found for no such username", async function () {
     const resp = await request(app)
-        .post(`/users/nope/dogs/${testJobIds[1]}`)
+        .post(`/users/nope/dogs/${testDogIds[1]}`)
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
   });

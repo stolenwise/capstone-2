@@ -9,7 +9,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
   u1Token,
   adminToken,
 } = require("./_testCommon");
@@ -176,10 +176,10 @@ describe("GET /dogs", function () {
 
 describe("GET /dogs/:id", function () {
   test("works for anon", async function () {
-    const resp = await request(app).get(`/dogs/${testJobIds[0]}`);
+    const resp = await request(app).get(`/dogs/${testDogIds[0]}`);
     expect(resp.body).toEqual({
       dog: {
-        id: testJobIds[0],
+        id: testDogIds[0],
         title: "J1",
         salary: 1,
         equity: "0.1",
@@ -205,7 +205,7 @@ describe("GET /dogs/:id", function () {
 describe("PATCH /dogs/:id", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .patch(`/dogs/${testJobIds[0]}`)
+        .patch(`/dogs/${testDogIds[0]}`)
         .send({
           title: "J-New",
         })
@@ -223,7 +223,7 @@ describe("PATCH /dogs/:id", function () {
 
   test("unauth for others", async function () {
     const resp = await request(app)
-        .patch(`/dogs/${testJobIds[0]}`)
+        .patch(`/dogs/${testDogIds[0]}`)
         .send({
           title: "J-New",
         })
@@ -243,7 +243,7 @@ describe("PATCH /dogs/:id", function () {
 
   test("bad request on handle change attempt", async function () {
     const resp = await request(app)
-        .patch(`/dogs/${testJobIds[0]}`)
+        .patch(`/dogs/${testDogIds[0]}`)
         .send({
           handle: "new",
         })
@@ -253,7 +253,7 @@ describe("PATCH /dogs/:id", function () {
 
   test("bad request with invalid data", async function () {
     const resp = await request(app)
-        .patch(`/dogs/${testJobIds[0]}`)
+        .patch(`/dogs/${testDogIds[0]}`)
         .send({
           salary: "not-a-number",
         })
@@ -267,21 +267,21 @@ describe("PATCH /dogs/:id", function () {
 describe("DELETE /dogs/:id", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-        .delete(`/dogs/${testJobIds[0]}`)
+        .delete(`/dogs/${testDogIds[0]}`)
         .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.body).toEqual({ deleted: testJobIds[0] });
+    expect(resp.body).toEqual({ deleted: testDogIds[0] });
   });
 
   test("unauth for others", async function () {
     const resp = await request(app)
-        .delete(`/dogs/${testJobIds[0]}`)
+        .delete(`/dogs/${testDogIds[0]}`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
     const resp = await request(app)
-        .delete(`/dogs/${testJobIds[0]}`);
+        .delete(`/dogs/${testDogIds[0]}`);
     expect(resp.statusCode).toEqual(401);
   });
 

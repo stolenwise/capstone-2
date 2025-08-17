@@ -10,13 +10,13 @@ const BASE_URL = "http://localhost:3001";
  *
  */
 
-class JoblyApi {
+class DoglyApi {
   // the token for interactive with the API will be stored here.
   static token;
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = JoblyApi.token ? { Authorization: `Bearer ${JoblyApi.token}` } : {};
+    const headers = DoglyApi.token ? { Authorization: `Bearer ${DoglyApi.token}` } : {};
     const params = (method === "get") ? data : {};
   
     try {
@@ -39,34 +39,34 @@ class JoblyApi {
 
   // Individual API routes
 
-// Company API helpers
+// Shelter API helpers
 
 
-  static async getCompany(handle) {
-    let res = await this.request(`companies/${handle}`);
-    return res.company;
+  static async getShelter(handle) {
+    let res = await this.request(`shelters/${handle}`);
+    return res.shelter;
   }
 
 
-  static async getCompanies(nameFilter) {
+  static async getShelters(nameFilter) {
     const params = nameFilter ? { name: nameFilter } : {};
-    const res = await this.request(`companies`, params);
-    return res.companies;  // array of companies
+    const res = await this.request(`shelters`, params);
+    return res.shelters;  // array of shelters
   }
 
-  // Job API helpers
+  // Dog API helpers
 
   
-  static async getJobs(titleFilter) {
+  static async getDogs(titleFilter) {
     const params = titleFilter ? { title: titleFilter } : {};
-    const res = await this.request("jobs", params);
-    return res.jobs;
+    const res = await this.request("dogs", params);
+    return res.dogs;
   }
   
-  // get Job Details for job/:id
-  static async getJob(id) {
-    const res = await this.request(`jobs/${id}`);
-    return res.job;
+  // get Dog Details for dog/:id
+  static async getDog(id) {
+    const res = await this.request(`dogs/${id}`);
+    return res.dog;
   }
 
 
@@ -97,9 +97,9 @@ static async saveProfile(username, data) {
   return res.user; // updated user
 }
 
-static async applyToJob(username, jobId) {
-  // POST /users/:username/jobs/:id   -> { applied: jobId }
-  const res = await this.request(`users/${username}/jobs/${jobId}`, {}, "post");
+static async applyToDog(username, dogId) {
+  // POST /users/:username/dogs/:id   -> { applied: dogId }
+  const res = await this.request(`users/${username}/dogs/${dogId}`, {}, "post");
   return res.applied;
 
 }
@@ -111,9 +111,9 @@ static async applyToJob(username, jobId) {
 
 
 // for now, put token ("testuser" / "password" on class)
-// JoblyApi.token = "eyJh...";  // disable for now
-JoblyApi.token = null;
+// DoglyApi.token = "eyJh...";  // disable for now
+DoglyApi.token = null;
 
 
 
-export default JoblyApi;
+export default DoglyApi;

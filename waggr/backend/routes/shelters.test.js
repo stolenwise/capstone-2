@@ -9,7 +9,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
   u1Token,
   adminToken,
 } = require("./_testCommon");
@@ -22,7 +22,7 @@ afterAll(commonAfterAll);
 /************************************** POST /shelters */
 
 describe("POST /shelters", function () {
-  const newCompany = {
+  const newShelter = {
     handle: "new",
     name: "New",
     logoUrl: "http://new.img",
@@ -33,18 +33,18 @@ describe("POST /shelters", function () {
   test("ok for admin", async function () {
     const resp = await request(app)
         .post("/shelters")
-        .send(newCompany)
+        .send(newShelter)
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
-      shelter: newCompany,
+      shelter: newShelter,
     });
   });
 
   test("unauth for non-admin", async function () {
     const resp = await request(app)
         .post("/shelters")
-        .send(newCompany)
+        .send(newShelter)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
@@ -64,7 +64,7 @@ describe("POST /shelters", function () {
     const resp = await request(app)
         .post("/shelters")
         .send({
-          ...newCompany,
+          ...newShelter,
           logoUrl: "not-a-url",
         })
         .set("authorization", `Bearer ${adminToken}`);
@@ -160,9 +160,9 @@ describe("GET /shelters/:handle", function () {
         numEmployees: 1,
         logoUrl: "http://c1.img",
         dogs: [
-          { id: testJobIds[0], title: "J1", equity: "0.1", salary: 1 },
-          { id: testJobIds[1], title: "J2", equity: "0.2", salary: 2 },
-          { id: testJobIds[2], title: "J3", equity: null, salary: 3 },
+          { id: testDogIds[0], title: "J1", equity: "0.1", salary: 1 },
+          { id: testDogIds[1], title: "J2", equity: "0.2", salary: 2 },
+          { id: testDogIds[2], title: "J3", equity: null, salary: 3 },
         ],
       },
     });

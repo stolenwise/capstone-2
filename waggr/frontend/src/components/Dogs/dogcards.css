@@ -1,4 +1,4 @@
-.JobCard { 
+.DogCard { 
     background:#fff; 
     border:1px solid #eee; 
     border-radius:8px; 
@@ -25,6 +25,6 @@
   }
   
   /* ensure the title link doesn’t overlay the button */
-  .JobCard h3 a { display: inline; position: relative; z-index: 1; }
+  .DogCard h3 a { display: inline; position: relative; z-index: 1; }
   .ApplyBtn { position: relative; z-index: 2; }
   

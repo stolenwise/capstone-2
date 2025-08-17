@@ -6,12 +6,12 @@ function Navbar({ currentUser, logout }) {
   return (
     <nav className="Navbar">
       <div className="Navbar-left">
-        <Link to="/" className="Navbar-logo">Jobly</Link>
+        <Link to="/" className="Navbar-logo">Waggr</Link>
       </div>
 
       <div className="Navbar-right">
-        <Link to="/companies">Companies</Link>
-        <Link to="/jobs">Jobs</Link>
+        <Link to="/shelters">Shelters</Link>
+        <Link to="/dogs">Dogs</Link>
 
         {currentUser ? (
   <div className="Navbar-user">

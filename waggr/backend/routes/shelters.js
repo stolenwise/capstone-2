@@ -7,7 +7,7 @@ const express = require("express");
 
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const Company = require("../models/shelter");
+const Shelter = require("../models/shelter");
 
 const shelterNewSchema = require("../schemas/shelterNew.json");
 const shelterUpdateSchema = require("../schemas/shelterUpdate.json");
@@ -33,7 +33,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const shelter = await Company.create(req.body);
+    const shelter = await Shelter.create(req.body);
     return res.status(201).json({ shelter });
   } catch (err) {
     return next(err);
@@ -64,7 +64,7 @@ router.get("/", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const shelters = await Company.findAll(q);
+    const shelters = await Shelter.findAll(q);
     return res.json({ shelters });
   } catch (err) {
     return next(err);
@@ -73,7 +73,7 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[handle]  =>  { shelter }
  *
- *  Company is { handle, name, description, numEmployees, logoUrl, dogs }
+ *  Shelter is { handle, name, description, numEmployees, logoUrl, dogs }
  *   where dogs is [{ id, title, salary, equity }, ...]
  *
  * Authorization required: none
@@ -81,7 +81,7 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:handle", async function (req, res, next) {
   try {
-    const shelter = await Company.get(req.params.handle);
+    const shelter = await Shelter.get(req.params.handle);
     return res.json({ shelter });
   } catch (err) {
     return next(err);
@@ -107,7 +107,7 @@ router.patch("/:handle", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const shelter = await Company.update(req.params.handle, req.body);
+    const shelter = await Shelter.update(req.params.handle, req.body);
     return res.json({ shelter });
   } catch (err) {
     return next(err);
@@ -121,7 +121,7 @@ router.patch("/:handle", ensureAdmin, async function (req, res, next) {
 
 router.delete("/:handle", ensureAdmin, async function (req, res, next) {
   try {
-    await Company.remove(req.params.handle);
+    await Shelter.remove(req.params.handle);
     return res.json({ deleted: req.params.handle });
   } catch (err) {
     return next(err);

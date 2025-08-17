@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
-import JoblyApi from "../api";
+import DoglyApi from "../api";
 
 function ApiTest() {
-  const [company, setCompany] = useState(null);
+  const [shelter, setShelter] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchCompany() {
+    async function fetchShelter() {
       try {
-        const result = await JoblyApi.getCompany("bauer-gallagher");
+        const result = await DoglyApi.getShelter("bauer-gallagher");
         console.log("API Response:", result);
-        setCompany(result);
+        setShelter(result);
       } catch (err) {
         console.error("API Error:", err);
         setError(err);
       }
     }
-    fetchCompany();
+    fetchShelter();
   }, []);
 
   if (error) return <p style={{color: "red"}}>Error: {error.toString()}</p>;
-  if (!company) return <p>Loading company data...</p>;
+  if (!shelter) return <p>Loading shelter data...</p>;
 
   return (
     <div>
-      <h1>{company.name}</h1>
-      <p>{company.description}</p>
+      <h1>{shelter.name}</h1>
+      <p>{shelter.description}</p>
     </div>
   );
 }

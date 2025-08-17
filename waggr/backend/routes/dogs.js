@@ -7,7 +7,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
-const Job = require("../models/dog");
+const Dog = require("../models/dog");
 const dogNewSchema = require("../schemas/dogNew.json");
 const dogUpdateSchema = require("../schemas/dogUpdate.json");
 const dogSearchSchema = require("../schemas/dogSearch.json");
@@ -32,7 +32,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const dog = await Job.create(req.body);
+    const dog = await Dog.create(req.body);
     return res.status(201).json({ dog });
   } catch (err) {
     return next(err);
@@ -63,7 +63,7 @@ router.get("/", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const dogs = await Job.findAll(q);
+    const dogs = await Dog.findAll(q);
     return res.json({ dogs });
   } catch (err) {
     return next(err);
@@ -80,7 +80,7 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   try {
-    const dog = await Job.get(req.params.id);
+    const dog = await Dog.get(req.params.id);
     return res.json({ dog });
   } catch (err) {
     return next(err);
@@ -105,7 +105,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const dog = await Job.update(req.params.id, req.body);
+    const dog = await Dog.update(req.params.id, req.body);
     return res.json({ dog });
   } catch (err) {
     return next(err);
@@ -119,7 +119,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
 
 router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
-    await Job.remove(req.params.id);
+    await Dog.remove(req.params.id);
     return res.json({ deleted: +req.params.id });
   } catch (err) {
     return next(err);

@@ -1,12 +1,12 @@
-.CompanyDetail {
+.ShelterDetail {
     padding: 20px;
   }
   
-  .CompanyDetail h2 {
+  .ShelterDetail h2 {
     margin-bottom: 10px;
   }
   
-  .CompanyDetail ul {
+  .ShelterDetail ul {
     list-style: none;
     padding: 0;
   }

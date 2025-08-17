@@ -7,7 +7,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for shelters. */
 
-class Job {
+class Dog {
   /** Create a dog (from data), update db, return new dog data.
    *
    * data should be { title, salary, equity, shelterHandle }
@@ -172,4 +172,4 @@ class Job {
   }
 }
 
-module.exports = Job;
+module.exports = Dog;

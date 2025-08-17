@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
-import JoblyApi from "../../api";
-import CompanyCard from "./companycard"; 
-import "./companylist.css";
+import DoglyApi from "../../api";
+import ShelterCard from "./sheltercard"; 
+import "./shelterlist.css";
 
-function CompanyList() {
-  const [companies, setCompanies] = useState([]);
+function ShelterList() {
+  const [shelters, setShelters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [term, setTerm] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("CompanyList mounted");
-    async function fetchCompanies() {
+    console.log("ShelterList mounted");
+    async function fetchShelters() {
       try {
-        const result = await JoblyApi.getCompanies();
-        console.log("Fetched companies:", result);
-        setCompanies(result);         
+        const result = await DoglyApi.getShelters();
+        console.log("Fetched shelters:", result);
+        setShelters(result);         
       } catch (error) {
         setError(error);
       } finally {
@@ -24,14 +24,14 @@ function CompanyList() {
       }
     }
 
-    fetchCompanies();
+    fetchShelters();
   }, []);
 
   async function handleSearch(e) {
     e.preventDefault();
     setLoading(true);
-    const comps = await JoblyApi.getCompanies(term.trim() || undefined);
-    setCompanies(comps);
+    const comps = await DoglyApi.getShelters(term.trim() || undefined);
+    setShelters(comps);
     setLoading(false);
 }
 
@@ -41,20 +41,20 @@ function CompanyList() {
 
   return (
     <div>
-     <div className="company-list">
-      <h1>Companies</h1>
+     <div className="shelter-list">
+      <h1>Shelters</h1>
 
       <form onSubmit={handleSearch} style={{ marginBottom: 16 }}>
         <input 
         value={term}
         onChange={(e) => setTerm(e.target.value)}
-        placeholder="Search companies..."
+        placeholder="Search shelters..."
         />
         <button>Search</button>
       </form>
       
-        {companies.map(c => (
-          <CompanyCard
+        {shelters.map(c => (
+          <ShelterCard
             key={c.handle}
             handle={c.handle}
             name={c.name}
@@ -67,4 +67,4 @@ function CompanyList() {
   );
 }
 
-export default CompanyList;
+export default ShelterList;

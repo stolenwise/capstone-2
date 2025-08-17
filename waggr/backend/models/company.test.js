@@ -2,13 +2,13 @@
 
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const Company = require("./shelter.js");
+const Shelter = require("./shelter.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -19,7 +19,7 @@ afterAll(commonAfterAll);
 /************************************** create */
 
 describe("create", function () {
-  const newCompany = {
+  const newShelter = {
     handle: "new",
     name: "New",
     description: "New Description",
@@ -28,8 +28,8 @@ describe("create", function () {
   };
 
   test("works", async function () {
-    let shelter = await Company.create(newCompany);
-    expect(shelter).toEqual(newCompany);
+    let shelter = await Shelter.create(newShelter);
+    expect(shelter).toEqual(newShelter);
 
     const result = await db.query(
           `SELECT handle, name, description, num_employees, logo_url
@@ -48,8 +48,8 @@ describe("create", function () {
 
   test("bad request with dupe", async function () {
     try {
-      await Company.create(newCompany);
-      await Company.create(newCompany);
+      await Shelter.create(newShelter);
+      await Shelter.create(newShelter);
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -61,7 +61,7 @@ describe("create", function () {
 
 describe("findAll", function () {
   test("works: all", async function () {
-    let shelters = await Company.findAll();
+    let shelters = await Shelter.findAll();
     expect(shelters).toEqual([
       {
         handle: "c1",
@@ -88,7 +88,7 @@ describe("findAll", function () {
   });
 
   test("works: by min employees", async function () {
-    let shelters = await Company.findAll({ minEmployees: 2 });
+    let shelters = await Shelter.findAll({ minEmployees: 2 });
     expect(shelters).toEqual([
       {
         handle: "c2",
@@ -108,7 +108,7 @@ describe("findAll", function () {
   });
 
   test("works: by max employees", async function () {
-    let shelters = await Company.findAll({ maxEmployees: 2 });
+    let shelters = await Shelter.findAll({ maxEmployees: 2 });
     expect(shelters).toEqual([
       {
         handle: "c1",
@@ -128,7 +128,7 @@ describe("findAll", function () {
   });
 
   test("works: by min-max employees", async function () {
-    let shelters = await Company.findAll(
+    let shelters = await Shelter.findAll(
         { minEmployees: 1, maxEmployees: 1 });
     expect(shelters).toEqual([
       {
@@ -142,7 +142,7 @@ describe("findAll", function () {
   });
 
   test("works: by name", async function () {
-    let shelters = await Company.findAll({ name: "1" });
+    let shelters = await Shelter.findAll({ name: "1" });
     expect(shelters).toEqual([
       {
         handle: "c1",
@@ -155,13 +155,13 @@ describe("findAll", function () {
   });
 
   test("works: empty list on nothing found", async function () {
-    let shelters = await Company.findAll({ name: "nope" });
+    let shelters = await Shelter.findAll({ name: "nope" });
     expect(shelters).toEqual([]);
   });
 
   test("bad request if invalid min > max", async function () {
     try {
-      await Company.findAll({ minEmployees: 10, maxEmployees: 1 });
+      await Shelter.findAll({ minEmployees: 10, maxEmployees: 1 });
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -173,7 +173,7 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let shelter = await Company.get("c1");
+    let shelter = await Shelter.get("c1");
     expect(shelter).toEqual({
       handle: "c1",
       name: "C1",
@@ -181,17 +181,17 @@ describe("get", function () {
       numEmployees: 1,
       logoUrl: "http://c1.img",
       dogs: [
-        { id: testJobIds[0], title: "Job1", salary: 100, equity: "0.1" },
-        { id: testJobIds[1], title: "Job2", salary: 200, equity: "0.2" },
-        { id: testJobIds[2], title: "Job3", salary: 300, equity: "0" },
-        { id: testJobIds[3], title: "Job4", salary: null, equity: null },
+        { id: testDogIds[0], title: "Dog1", salary: 100, equity: "0.1" },
+        { id: testDogIds[1], title: "Dog2", salary: 200, equity: "0.2" },
+        { id: testDogIds[2], title: "Dog3", salary: 300, equity: "0" },
+        { id: testDogIds[3], title: "Dog4", salary: null, equity: null },
       ],
     });
   });
 
   test("not found if no such shelter", async function () {
     try {
-      await Company.get("nope");
+      await Shelter.get("nope");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -210,7 +210,7 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let shelter = await Company.update("c1", updateData);
+    let shelter = await Shelter.update("c1", updateData);
     expect(shelter).toEqual({
       handle: "c1",
       ...updateData,
@@ -237,7 +237,7 @@ describe("update", function () {
       logoUrl: null,
     };
 
-    let shelter = await Company.update("c1", updateDataSetNulls);
+    let shelter = await Shelter.update("c1", updateDataSetNulls);
     expect(shelter).toEqual({
       handle: "c1",
       ...updateDataSetNulls,
@@ -258,7 +258,7 @@ describe("update", function () {
 
   test("not found if no such shelter", async function () {
     try {
-      await Company.update("nope", updateData);
+      await Shelter.update("nope", updateData);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -267,7 +267,7 @@ describe("update", function () {
 
   test("bad request with no data", async function () {
     try {
-      await Company.update("c1", {});
+      await Shelter.update("c1", {});
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -279,7 +279,7 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Company.remove("c1");
+    await Shelter.remove("c1");
     const res = await db.query(
         "SELECT handle FROM shelters WHERE handle='c1'");
     expect(res.rows.length).toEqual(0);
@@ -287,7 +287,7 @@ describe("remove", function () {
 
   test("not found if no such shelter", async function () {
     try {
-      await Company.remove("nope");
+      await Shelter.remove("nope");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

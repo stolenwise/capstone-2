@@ -1,4 +1,4 @@
-.CompanyCard {
+.ShelterCard {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -8,37 +8,37 @@
     transition: box-shadow 0.2s ease;
   }
   
-  .CompanyCard:hover {
+  .ShelterCard:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .CompanyCard-link {
+  .ShelterCard-link {
     text-decoration: none;
     color: inherit;
     display: block;
   }
   
-  .CompanyCard-content {
+  .ShelterCard-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   
-  .CompanyCard-text {
+  .ShelterCard-text {
     flex-grow: 1;
   }
   
-  .CompanyCard h3 {
+  .ShelterCard h3 {
     margin: 0 0 0.5rem;
     font-size: 1.25rem;
   }
   
-  .CompanyCard p {
+  .ShelterCard p {
     margin: 0;
     color: #555;
   }
   
-  .CompanyCard-logo {
+  .ShelterCard-logo {
     width: 80px;
     height: 80px;
     object-fit: contain;

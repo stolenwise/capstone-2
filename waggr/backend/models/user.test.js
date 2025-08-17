@@ -12,7 +12,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -141,7 +141,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
-      bookings: [testJobIds[0]],
+      bookings: [testDogIds[0]],
     });
   });
 
@@ -235,12 +235,12 @@ describe("remove", function () {
 
 describe("bookDog", function () {
   test("works", async function () {
-    await User.bookDog("u1", testJobIds[1]);
+    await User.bookDog("u1", testDogIds[1]);
 
     const res = await db.query(
-        "SELECT * FROM bookings WHERE dog_id=$1", [testJobIds[1]]);
+        "SELECT * FROM bookings WHERE dog_id=$1", [testDogIds[1]]);
     expect(res.rows).toEqual([{
-      dog_id: testJobIds[1],
+      dog_id: testDogIds[1],
       username: "u1",
     }]);
   });
@@ -256,7 +256,7 @@ describe("bookDog", function () {
 
   test("not found if no such user", async function () {
     try {
-      await User.bookDog("nope", testJobIds[0], "applied");
+      await User.bookDog("nope", testDogIds[0], "applied");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

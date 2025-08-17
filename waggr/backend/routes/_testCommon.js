@@ -2,11 +2,11 @@
 
 const db = require("../db.js");
 const User = require("../models/user");
-const Company = require("../models/shelter");
-const Job = require("../models/dog");
+const Shelter = require("../models/shelter");
+const Dog = require("../models/dog");
 const { createToken } = require("../helpers/tokens");
 
-const testJobIds = [];
+const testDogIds = [];
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
@@ -14,7 +14,7 @@ async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM shelters");
 
-  await Company.create(
+  await Shelter.create(
       {
         handle: "c1",
         name: "C1",
@@ -22,7 +22,7 @@ async function commonBeforeAll() {
         description: "Desc1",
         logoUrl: "http://c1.img",
       });
-  await Company.create(
+  await Shelter.create(
       {
         handle: "c2",
         name: "C2",
@@ -30,7 +30,7 @@ async function commonBeforeAll() {
         description: "Desc2",
         logoUrl: "http://c2.img",
       });
-  await Company.create(
+  await Shelter.create(
       {
         handle: "c3",
         name: "C3",
@@ -39,11 +39,11 @@ async function commonBeforeAll() {
         logoUrl: "http://c3.img",
       });
 
-  testJobIds[0] = (await Job.create(
+  testDogIds[0] = (await Dog.create(
       { title: "J1", salary: 1, equity: "0.1", shelterHandle: "c1" })).id;
-  testJobIds[1] = (await Job.create(
+  testDogIds[1] = (await Dog.create(
       { title: "J2", salary: 2, equity: "0.2", shelterHandle: "c1" })).id;
-  testJobIds[2] = (await Job.create(
+  testDogIds[2] = (await Dog.create(
       { title: "J3", salary: 3, /* equity null */ shelterHandle: "c1" })).id;
 
   await User.register({
@@ -71,7 +71,7 @@ async function commonBeforeAll() {
     isAdmin: false,
   });
 
-  await User.bookDog("u1", testJobIds[0]);
+  await User.bookDog("u1", testDogIds[0]);
 }
 
 async function commonBeforeEach() {
@@ -97,7 +97,7 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
   u1Token,
   u2Token,
   adminToken,

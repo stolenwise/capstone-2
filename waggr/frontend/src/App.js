@@ -1,28 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NavBar from "./components/navbar";
-import ApiTest from "./components/apitest";
-import CompanyList from "./components/Company/companylist";
-import CompanyDetails from "./components/Company/companydetails";
-import JobList from "./components/Jobs/joblist";
-import JobDetails from "./components/Jobs/jobdetails";
+
+// These two likely exist as PascalCase (adjust if needed)
+import NavBar from "./components/NavBar";
+import ApiTest from "./components/ApiTest";
+
+// These four appear to be lowercase on disk
+import ShelterList from "./components/Shelter/shelterlist";
+import ShelterDetails from "./components/Shelter/shelterdetails";
+import DogList from "./components/Dogs/doglist";
+import DogDetails from "./components/Dogs/dogdetails";
+
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import useLocalStorage from "./hooks/useLocalStorage";
-import JoblyApi from "./api";
+
+// Api.js is capitalized on disk
+import DoglyApi from "./api";
+
+// Auth files are lowercase on disk
 import LoginForm from "./components/Auth/loginform";
 import SignupForm from "./components/Auth/signupform";
 import ProfileForm from "./components/Auth/profileform";
 import ProfileView from "./components/Auth/profileview";
-import Home from "./home.js";
+
+// Home is lowercase on disk
+import Home from "./home";
+
+// RequireAuth is lowercase and .jsx on disk
 import RequireAuth from "./components/Auth/requireauth";
+
+// NotFound is lowercase on disk
 import NotFound from "./components/notfound";
 
 
-
 function App() {
-  const [token, setToken] = useLocalStorage("jobly-token", null);
+  const [token, setToken] = useLocalStorage("dogly-token", null);
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
 
@@ -31,9 +45,9 @@ function App() {
       setInfoLoaded(false);
       try {
         if (token) {
-          JoblyApi.token = token;
+          DoglyApi.token = token;
           const { username } = jwtDecode(token);
-          const user = await JoblyApi.getCurrentUser(username);
+          const user = await DoglyApi.getCurrentUser(username);
           setCurrentUser(user);
         } else {
           setCurrentUser(null);
@@ -49,23 +63,23 @@ function App() {
   }, [token]);
 
   async function signup(data) {
-    const t = await JoblyApi.signup(data);
+    const t = await DoglyApi.signup(data);
     setToken(t);                  // persists via useLocalStorage
   
     // set user right away instead of waiting for useEffect
-    JoblyApi.token = t;
+    DoglyApi.token = t;
     const { username } = jwtDecode(t);
-    const user = await JoblyApi.getCurrentUser(username);
+    const user = await DoglyApi.getCurrentUser(username);
     setCurrentUser(user);
   }
   
   async function login(credentials) {
-    const t = await JoblyApi.login(credentials);
+    const t = await DoglyApi.login(credentials);
     setToken(t);
   
-    JoblyApi.token = t;
+    DoglyApi.token = t;
     const { username } = jwtDecode(t);
-    const user = await JoblyApi.getCurrentUser(username);
+    const user = await DoglyApi.getCurrentUser(username);
     setCurrentUser(user);
   }
   
@@ -77,7 +91,7 @@ function App() {
   async function updateProfile(formData) {
     try {
       // username comes from currentUser
-      const updated = await JoblyApi.saveProfile(currentUser.username, formData);
+      const updated = await DoglyApi.saveProfile(currentUser.username, formData);
       setCurrentUser(updated);            // reflect changes app-wide
       return { success: true };
     } catch (errs) {
@@ -87,30 +101,30 @@ function App() {
   }
 
 
-  function hasAppliedToJob(jobId) {
+  function hasAppliedToDog(dogId) {
     if (!currentUser) return false;
     const ids = currentUser.applications
-      || (currentUser.jobs ? currentUser.jobs.map(j => j.id) : []);
-    return ids.includes(jobId);
+      || (currentUser.dogs ? currentUser.dogs.map(j => j.id) : []);
+    return ids.includes(dogId);
   }
   
-  async function applyToJob(jobId) {
-    if (!currentUser || hasAppliedToJob(jobId)) return;
+  async function applyToDog(dogId) {
+    if (!currentUser || hasAppliedToDog(dogId)) return;
   
     setCurrentUser(u => {
-      const ids = u.applications || (u.jobs ? u.jobs.map(j => j.id) : []);
-      return { ...u, applications: [...ids, jobId] }; // triggers re-render everywhere
+      const ids = u.applications || (u.dogs ? u.dogs.map(j => j.id) : []);
+      return { ...u, applications: [...ids, dogId] }; // triggers re-render everywhere
     });
   
     try {
-      await JoblyApi.applyToJob(currentUser.username, jobId);
+      await DoglyApi.applyToDog(currentUser.username, dogId);
     } catch (err) {
       // rollback on error
       setCurrentUser(u => {
-        const ids = u.applications || (u.jobs ? u.jobs.map(j => j.id) : []);
-        return { ...u, applications: ids.filter(id => id !== jobId) };
+        const ids = u.applications || (u.dogs ? u.dogs.map(j => j.id) : []);
+        return { ...u, applications: ids.filter(id => id !== dogId) };
       });
-      console.error("applyToJob failed:", err);
+      console.error("applyToDog failed:", err);
     }
   }
   
@@ -136,10 +150,10 @@ function App() {
           {/* protected routes */}
         <Route element={<RequireAuth currentUser={currentUser} infoLoaded={infoLoaded} />}>
           <Route path="/profile" element={<ProfileView currentUser={currentUser} />} />
-          <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} />  <Route path="/companies" element={<CompanyList />} />
-          <Route path="/jobs" element={<JobList hasAppliedToJob={hasAppliedToJob} applyToJob={applyToJob} />}/>
-          <Route path="/companies/:handle" element={<CompanyDetails hasAppliedToJob={hasAppliedToJob} applyToJob={applyToJob} />}/>
-          <Route path="/jobs/:id" element={<JobDetails />} />
+          <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} />  <Route path="/shelters" element={<ShelterList />} />
+          <Route path="/dogs" element={<DogList hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
+          <Route path="/shelters/:handle" element={<ShelterDetails hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
+          <Route path="/dogs/:id" element={<DogDetails />} />
         </Route>
      
 

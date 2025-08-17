@@ -4,13 +4,13 @@ export default function Home({ currentUser }) {
       <div className="Home">
         {currentUser ? (
           <h2>Welcome back, {currentUser.firstName || currentUser.username}!
-           <p> It's a beautiful day to land a new job. ☀️ </p>
-           <p> Let's get work! </p>
+           <p> It's a beautiful day to walk a dog. ☀️ </p>
+           <p> Let's get waggin'! </p>
            </h2>
          
         ) : (
           <>
-            <h2>Welcome to Jobly</h2>
+            <h2>Welcome to Dogly</h2>
             <p>Please log in or sign up to start browsing.</p>
           </>
         )}

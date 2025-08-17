@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
-const testJobIds = [];
+const testDogIds = [];
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
@@ -17,14 +17,14 @@ async function commonBeforeAll() {
            ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
            ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
 
-  const resultsJobs = await db.query(`
+  const resultsDogs = await db.query(`
     INSERT INTO dogs (title, salary, equity, shelter_handle)
-    VALUES ('Job1', 100, '0.1', 'c1'),
-           ('Job2', 200, '0.2', 'c1'),
-           ('Job3', 300, '0', 'c1'),
-           ('Job4', NULL, NULL, 'c1')
+    VALUES ('Dog1', 100, '0.1', 'c1'),
+           ('Dog2', 200, '0.2', 'c1'),
+           ('Dog3', 300, '0', 'c1'),
+           ('Dog4', NULL, NULL, 'c1')
     RETURNING id`);
-  testJobIds.splice(0, 0, ...resultsJobs.rows.map(r => r.id));
+  testDogIds.splice(0, 0, ...resultsDogs.rows.map(r => r.id));
 
   await db.query(`
         INSERT INTO users(username,
@@ -43,7 +43,7 @@ async function commonBeforeAll() {
   await db.query(`
         INSERT INTO bookings(username, dog_id)
         VALUES ('u1', $1)`,
-      [testJobIds[0]]);
+      [testDogIds[0]]);
 }
 
 async function commonBeforeEach() {
@@ -64,5 +64,5 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testJobIds,
+  testDogIds,
 };

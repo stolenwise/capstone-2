@@ -1,12 +1,12 @@
-// src/components/Jobs/JobList.js
+// src/components/Dogs/DogList.js
 import React, { useEffect, useState } from "react";
-import JoblyApi from "../../api";
-import JobCard from "./jobcards";
-import JobDetails from "./jobdetails";
-import "./jobcards.css";
+import DoglyApi from "../../api";
+import DogCard from "./dogcards";
+import DogDetails from "./dogdetails";
+import "./dogcards.css";
 
-function JobList({ hasAppliedToJob, applyToJob }) {
-  const [jobs, setJobs] = useState([]);
+function DogList({ hasAppliedToDog, applyToDog }) {
+  const [dogs, setDogs] = useState([]);
   const [term, setTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,8 +14,8 @@ function JobList({ hasAppliedToJob, applyToJob }) {
   useEffect(() => {
     (async function load() {
       try {
-        const j = await JoblyApi.getJobs();
-        setJobs(j);
+        const j = await DoglyApi.getDogs();
+        setDogs(j);
       } catch (e) {
         setError(e);
       } finally {
@@ -28,8 +28,8 @@ function JobList({ hasAppliedToJob, applyToJob }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const j = await JoblyApi.getJobs(term.trim() || undefined); // backend filtering
-      setJobs(j);
+      const j = await DoglyApi.getDogs(term.trim() || undefined); // backend filtering
+      setDogs(j);
     } catch (e) {
       setError(e);
     } finally {
@@ -37,38 +37,38 @@ function JobList({ hasAppliedToJob, applyToJob }) {
     }
   }
 
-  if (loading) return <div>Loading jobs...</div>;
+  if (loading) return <div>Loading dogs...</div>;
   if (error)   return <div style={{color:"red"}}>Error: {String(error)}</div>;
-  if (!jobs.length) return (
+  if (!dogs.length) return (
     <div>
-      <h1>Jobs</h1>
+      <h1>Dogs</h1>
       <form onSubmit={handleSearch} style={{ marginBottom: 16 }}>
-        <input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Search jobs..." />
+        <input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Search dogs..." />
         <button>Search</button>
       </form>
-      <p>No jobs found.</p>
+      <p>No dogs found.</p>
     </div>
   );
 
   return (
     <div>
-      <h1>Jobs</h1>
+      <h1>Dogs</h1>
       <form onSubmit={handleSearch} style={{ marginBottom: 16 }}>
-        <input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Search jobs..." />
+        <input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Search dogs..." />
         <button>Search</button>
       </form>
 
-      <div className="job-list">
-        {jobs.map(j => (
-          <JobCard
+      <div className="dog-list">
+        {dogs.map(j => (
+          <DogCard
             key={j.id}
             id={j.id}
             title={j.title}
             salary={j.salary}
             equity={j.equity}
-            companyName={j.companyName}
-            hasAppliedToJob={hasAppliedToJob}
-            applyToJob={applyToJob}
+            shelterName={j.shelterName}
+            hasAppliedToDog={hasAppliedToDog}
+            applyToDog={applyToDog}
           />
         ))}
       </div>
@@ -76,4 +76,4 @@ function JobList({ hasAppliedToJob, applyToJob }) {
   );
 }
 
-export default JobList;
+export default DogList;
