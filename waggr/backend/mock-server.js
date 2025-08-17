@@ -78,6 +78,9 @@ async function fetchPetfinderDogs({ q, breed, age, size, page = 1, limit = 24, l
     coat: a.coat || null, // e.g., "Short", "Medium", "Long"
     color: a.colors?.primary || null, // e.g., "White / Cream"
     photoUrl: a.photos?.[0]?.medium || a.primary_photo_cropped?.medium || "",
+    photos: (a.photos || [])
+      .map(p => p.medium || p.full || p.large || p.small)
+      .filter(Boolean),
     city: a.contact?.address?.city || "",
     state: a.contact?.address?.state || "",
     url: a.url,

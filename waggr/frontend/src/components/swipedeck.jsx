@@ -32,7 +32,8 @@ export default function SwipeDeck() {
           .filter(d => d.photoUrl)
           .map(d => ({
             id: d.id,
-            url: d.photoUrl,
+            url: d.photoUrl,                 // primary (still used elsewhere)
+            photos: (d.photos && d.photos.length ? d.photos : [d.photoUrl]).filter(Boolean),
             name: d.name,
             breed: d.breed,
             age: d.age,
@@ -122,6 +123,7 @@ export default function SwipeDeck() {
 }
 
 function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExpand }) {
+  const [photoIndex, setPhotoIndex] = useState(0);
   const x = useMotionValue(0);
   const rotateDrag = useTransform(x, [-150, 150], [-16, 16]);
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
@@ -131,6 +133,18 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
 
   const yOffset = Math.min(indexFromTop * 6, 18);
   const scale = isFront ? 1 : 0.98;
+
+  const photos = (card.photos && card.photos.length ? card.photos : [card.url]).filter(Boolean);
+
+    const nextPhoto = (e) => {
+      e.stopPropagation();
+      setPhotoIndex((photoIndex + 1) % photos.length);
+    };
+  
+    const prevPhoto = (e) => {
+      e.stopPropagation();
+      setPhotoIndex((photoIndex - 1 + photos.length) % photos.length);
+    };
 
   const handleDragEnd = () => {
     if (isExpanded) return; // no swipe while expanded
@@ -180,12 +194,64 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
         onDragEnd={handleDragEnd}
         onClick={onToggleExpand}
       >
-        <img
-          src={card.url}
-          alt={card.name}
-          style={{ width: "100%", height: 240, objectFit: "cover", display: "block" }}
-          onError={e => (e.currentTarget.style.display = "none")}
-        />
+       <div style={{ position: "relative" }}>
+  <img
+    src={photos[photoIndex]}
+    alt={card.name}
+    style={{
+      width: "100%",
+      height: 220,
+      objectFit: "cover",
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12
+    }}
+  />
+  
+  {photos.length > 1 && (
+    <>
+      {/* Left arrow */}
+      <button
+        onClick={prevPhoto}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: 10,
+          transform: "translateY(-50%)",
+          background: "rgba(0,0,0,0.4)",
+          border: "none",
+          borderRadius: "50%",
+          color: "white",
+          width: 32,
+          height: 32,
+          cursor: "pointer"
+        }}
+      >
+        ‹
+      </button>
+
+      {/* Right arrow */}
+      <button
+        onClick={nextPhoto}
+        style={{
+          position: "absolute",
+          top: "50%",
+          right: 10,
+          transform: "translateY(-50%)",
+          background: "rgba(0,0,0,0.4)",
+          border: "none",
+          borderRadius: "50%",
+          color: "white",
+          width: 32,
+          height: 32,
+          cursor: "pointer"
+        }}
+      >
+        ›
+      </button>
+    </>
+  )}
+</div>
+
         <div style={{ padding: 12 }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: "#111" }}>{card.name}</div>
           <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 8 }}>
@@ -235,11 +301,19 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
                 boxShadow: "0 24px 30px rgba(0,0,0,.35)",
               }}
             >
-              <img
-                src={card.url}
-                alt={card.name}
-                style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }}
-              />
+              <div style={{ position: "relative" }}>
+                <img
+                  src={photos[photoIndex]}
+                  alt={card.name}
+                  style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }}
+                />
+                {photos.length > 1 && (
+                  <>
+                    <button onClick={prevPhoto} style={arrowLeft}>‹</button>
+                    <button onClick={nextPhoto} style={arrowRight}>›</button>
+                  </>
+                )}
+              </div>
               <div style={{ padding: 16 }}>
                 <div style={{ fontSize: 24, fontWeight: 800, color: "#111" }}>{card.name}</div>
                 <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 12 }}>
@@ -327,3 +401,19 @@ const btn = {
   background: "#fff",
   cursor: "pointer",
 };
+
+const arrowBase = {
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  background: "rgba(0,0,0,0.45)",
+  border: "none",
+  borderRadius: "50%",
+  color: "white",
+  width: 32,
+  height: 32,
+  cursor: "pointer"
+};
+
+const arrowLeft = { ...arrowBase, left: 12 };
+const arrowRight = { ...arrowBase, right: 12 };
