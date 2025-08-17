@@ -1,11 +1,92 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 const SECRET = "dev-mock-secret";
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+
+
+const PF_BASE = "https://api.petfinder.com/v2";
+let pfToken = null;
+let pfTokenExp = 0; // epoch ms
+
+async function getPetfinderToken() {
+  const now = Date.now();
+  if (pfToken && now < pfTokenExp - 60_000) return pfToken;
+
+  const body = new URLSearchParams({
+    grant_type: "client_credentials",
+    client_id: process.env.PETFINDER_CLIENT_ID || "",
+    client_secret: process.env.PETFINDER_CLIENT_SECRET || ""
+  });
+
+  try {
+    const { data } = await axios.post(
+      `${PF_BASE}/oauth2/token`,
+      body.toString(),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" }, timeout: 10000 }
+    );
+    pfToken = data.access_token;
+    pfTokenExp = now + (data.expires_in || 3600) * 1000;
+    return pfToken;
+  } catch (err) {
+    console.error("Petfinder token error:", err?.response?.status, err?.response?.data || err.message);
+    throw err;
+  }
+}
+
+
+/** Fetch dogs from Petfinder and map to our shape */
+async function fetchPetfinderDogs({ q, breed, age, size, page = 1, limit = 24, location, distance }) {
+  const token = await getPetfinderToken();
+  const params = {
+    type: "dog",
+    q,
+    breed,
+    age,
+    size,
+    page,
+    limit,
+    location,          // e.g., "94110" or "San Jose, CA"
+    distance           // miles, e.g., 50
+    // You can add more: gender, good_with_children, good_with_dogs, sort, etc.
+  };
+
+  // remove undefined params
+  Object.keys(params).forEach(k => params[k] == null && delete params[k]);
+
+  const { data } = await axios.get(`${PF_BASE}/animals`, {
+    headers: { Authorization: `Bearer ${token}` },
+    params
+  });
+
+  // map into your app’s dog card shape
+  const mapped = (data.animals || []).map(a => ({
+    id: a.id,
+    shelterId: a.organization_id, // string from PF; keep as-is or map later
+    name: a.name,
+    breed: a.breeds?.primary || "Unknown",
+    age: a.age || "Unknown",
+    size: a.size || "M",
+    photoUrl: a.photos?.[0]?.medium || a.primary_photo_cropped?.medium || "",
+    // optional extra fields you might want:
+    city: a.contact?.address?.city,
+    state: a.contact?.address?.state,
+    url: a.url
+  }));
+
+  return {
+    dogs: mapped,
+    pagination: data.pagination
+  };
+}
+
 
 // ---- In-memory data ----
 const users = [
@@ -109,6 +190,22 @@ app.post("/bookings/users/:username/dogs/:id/book", (req, res) => {
   bookings.push(b);
   res.status(201).json({ booked: newId });
 });
+
+
+// ---PetFinder API---
+
+// GET /pf/dogs  -> live Petfinder results (proxy)
+app.get("/pf/dogs", async (req, res) => {
+  try {
+    const { q, breed, age, size, page, limit, location, distance } = req.query;
+    const results = await fetchPetfinderDogs({ q, breed, age, size, page, limit, location, distance });
+    res.json(results);
+  } catch (err) {
+    console.error("Petfinder error:", err?.response?.data || err.message);
+    res.status(502).json({ error: { message: "Petfinder upstream error" }});
+  }
+});
+
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Mock Waggr API running on http://localhost:${PORT}`));

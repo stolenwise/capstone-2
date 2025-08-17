@@ -1,119 +1,117 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 
-/** API Class.
- *
- * Static class tying together methods used to get/send to to the API.
- * There shouldn't be any frontend-specific stuff here, and there shouldn't
- * be any API-aware stuff elsewhere in the frontend.
- *
- */
-
+/** API Class: centralizes all requests */
 class DoglyApi {
-  // the token for interactive with the API will be stored here.
-  static token;
+  // JWT lives here if you choose to use it later
+  static token = null;
 
   static async request(endpoint, data = {}, method = "get") {
     const url = `${BASE_URL}/${endpoint}`;
-    const headers = DoglyApi.token ? { Authorization: `Bearer ${DoglyApi.token}` } : {};
-    const params = (method === "get") ? data : {};
-  
+    const headers = DoglyApi.token
+      ? { Authorization: `Bearer ${DoglyApi.token}` }
+      : {};
+    const params = method === "get" ? data : undefined;
+
     try {
       const resp = await axios({ url, method, data, params, headers });
       return resp.data;
     } catch (err) {
       console.error("API Error:", err);
-  
-      // Be defensive: err.response may be undefined on network errors
       const message =
         err?.response?.data?.error?.message ||
         err?.message ||
         "Network error";
-  
-      // Normalize to an array as the rest of the app expects
       throw Array.isArray(message) ? message : [message];
     }
   }
-  
 
-  // Individual API routes
+  /** ---------- Shelters ---------- */
 
-// Shelter API helpers
-
-
-  static async getShelter(handle) {
-    let res = await this.request(`shelters/${handle}`);
-    return res.shelter;
+  // In your mock server, shelter route is /shelters/:id (numeric),
+  // not handle. Adjust as needed if you later add handles.
+  static async getShelter(id) {
+    const res = await this.request(`shelters/${id}`);
+    return res.shelter; // { id, name, ... }
   }
 
-
-  static async getShelters(nameFilter) {
-    const params = nameFilter ? { name: nameFilter } : {};
-    const res = await this.request(`shelters`, params);
-    return res.shelters;  // array of shelters
+  // Supports ?nameLike= and ?city= per mock-server.js
+  static async getShelters(filters = {}) {
+    const params = {};
+    if (filters.nameLike) params.nameLike = filters.nameLike;
+    if (filters.city) params.city = filters.city;
+    const res = await this.request("shelters", params);
+    return res.shelters; // array
   }
 
-  // Dog API helpers
+  /** ------------ Dogs ------------- */
 
-  
-  static async getDogs(titleFilter) {
-    const params = titleFilter ? { title: titleFilter } : {};
+  // Your mock supports q, breed, age, size
+  static async getDogs(filters = {}) {
+    const params = {};
+    if (filters.q) params.q = filters.q;
+    if (filters.breed) params.breed = filters.breed;
+    if (filters.age) params.age = filters.age; // e.g., "Young", "Adult"
+    if (filters.size) params.size = filters.size; // e.g., "S","M","L"
     const res = await this.request("dogs", params);
-    return res.dogs;
+    return res.dogs; // array
   }
-  
-  // get Dog Details for dog/:id
+
   static async getDog(id) {
     const res = await this.request(`dogs/${id}`);
-    return res.dog;
+    return res.dog; // { ...dog, shelterName }
   }
 
+  /** ----------- Auth ------------- */
 
-  // Auth API Helpers
+  static async login(credentials) {
+    const res = await this.request("auth/token", credentials, "post");
+    return res.token;
+  }
 
-// get token for login
-static async login(credentials) {
-  const res = await this.request("auth/token", credentials, "post");
-  return res.token;
+  static async signup(data) {
+    const res = await this.request("auth/register", data, "post");
+    return res.token;
+  }
+
+  static async getCurrentUser(username) {
+    const res = await this.request(`users/${username}`);
+    // mock returns { user, bookings }
+    return res;
+  }
+
+  // NOTE: saveProfile is NOT implemented in the mock server.
+  // Keep this here for future real backend:
+  static async saveProfile(username, data) {
+    const res = await this.request(`users/${username}`, data, "patch");
+    return res.user;
+  }
+
+  /** --------- Bookings ---------- */
+
+  // Matches mock: POST /bookings/users/:username/dogs/:id/book
+  static async bookDog(username, dogId, { startAt, durationMin } = {}) {
+    const res = await this.request(
+      `bookings/users/${username}/dogs/${dogId}/book`,
+      { startAt, durationMin },
+      "post"
+    );
+    // mock returns { booked: newId }
+    return res.booked;
+  }
+
+  /** ------ Petfinder proxy ------- */
+
+  // GET /pf/dogs proxied by backend (uses backend env secrets)
+  static async getPetfinderDogs(params = {}) {
+    const res = await this.request("pf/dogs", params, "get");
+    // { dogs: [...], pagination: {...} }
+    return res;
+  }
 }
 
-// get token for signup
-static async signup(data) {
-  const res = await this.request("auth/register", data, "post");
-  return res.token;
-}
-
-// get current user
-static async getCurrentUser(username) {
-  const res = await this.request(`users/${username}`);
-  return res.user;
-}
-
-
-static async saveProfile(username, data) {
-  // backend usually expects: { firstName, lastName, email, password }
-  const res = await this.request(`users/${username}`, data, "patch");
-  return res.user; // updated user
-}
-
-static async applyToDog(username, dogId) {
-  // POST /users/:username/dogs/:id   -> { applied: dogId }
-  const res = await this.request(`users/${username}/dogs/${dogId}`, {}, "post");
-  return res.applied;
-
-}
-}
-
-
-
-
-
-
-// for now, put token ("testuser" / "password" on class)
-// DoglyApi.token = "eyJh...";  // disable for now
+// Optional: set token here later if you add JWT auth
 DoglyApi.token = null;
-
-
 
 export default DoglyApi;

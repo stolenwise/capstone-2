@@ -11,6 +11,7 @@ import ShelterList from "./components/Shelter/shelterlist";
 import ShelterDetails from "./components/Shelter/shelterdetails";
 import DogList from "./components/Dogs/doglist";
 import DogDetails from "./components/Dogs/dogdetails";
+import PetfinderTest from "./components/petfindertest";
 
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -154,6 +155,7 @@ function App() {
           <Route path="/dogs" element={<DogList hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
           <Route path="/shelters/:handle" element={<ShelterDetails hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
           <Route path="/dogs/:id" element={<DogDetails />} />
+          <Route path="/pf-test" element={<PetfinderTest />} />
         </Route>
      
 

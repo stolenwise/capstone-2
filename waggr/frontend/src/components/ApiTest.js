@@ -6,28 +6,27 @@ function ApiTest() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchShelter() {
+    (async function run() {
       try {
-        const result = await DoglyApi.getShelter("bauer-gallagher");
-        console.log("API Response:", result);
+        const result = await DoglyApi.getShelter(1); 
         setShelter(result);
       } catch (err) {
-        console.error("API Error:", err);
         setError(err);
       }
-    }
-    fetchShelter();
+    })();
   }, []);
 
-  if (error) return <p style={{color: "red"}}>Error: {error.toString()}</p>;
+  if (error) return <p style={{ color: "red" }}>Error: {String(error)}</p>;
   if (!shelter) return <p>Loading shelter data...</p>;
 
   return (
     <div>
       <h1>{shelter.name}</h1>
-      <p>{shelter.description}</p>
+      <p>{shelter.city}, {shelter.state}</p>
+      <a href={shelter.website} target="_blank" rel="noreferrer">{shelter.website}</a>
     </div>
   );
 }
 
 export default ApiTest;
+

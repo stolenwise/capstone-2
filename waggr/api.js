@@ -44,6 +44,8 @@ class DoglyApi {
     return res.shelter;
   }
 
+  
+
   // obviously, you'll add a lot here ...
 }
 
