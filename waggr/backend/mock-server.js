@@ -69,16 +69,24 @@ async function fetchPetfinderDogs({ q, breed, age, size, page = 1, limit = 24, l
   // map into your app’s dog card shape
   const mapped = (data.animals || []).map(a => ({
     id: a.id,
-    shelterId: a.organization_id, // string from PF; keep as-is or map later
+    shelterId: a.organization_id,
     name: a.name,
     breed: a.breeds?.primary || "Unknown",
     age: a.age || "Unknown",
-    size: a.size || "M",
+    size: a.size || "Unknown",
+    gender: a.gender || "Unknown",
+    coat: a.coat || null, // e.g., "Short", "Medium", "Long"
+    color: a.colors?.primary || null, // e.g., "White / Cream"
     photoUrl: a.photos?.[0]?.medium || a.primary_photo_cropped?.medium || "",
-    // optional extra fields you might want:
-    city: a.contact?.address?.city,
-    state: a.contact?.address?.state,
-    url: a.url
+    city: a.contact?.address?.city || "",
+    state: a.contact?.address?.state || "",
+    url: a.url,
+  
+    // extra “About” info
+    tags: a.tags || [], // “Affectionate”, “Curious”, …
+    attributes: a.attributes || {}, // spayed_neutered, house_trained, shots_current, special_needs
+    environment: a.environment || {}, // children, dogs, cats (true/false/null)
+    description: a.description || ""
   }));
 
   return {

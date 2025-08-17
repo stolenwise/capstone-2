@@ -1,28 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import DoglyApi from "../api";
 
-// tune as needed
 const CARD_W = 320;
 const CARD_H = 440;
 const PAGE_SIZE = 12;
-const SWIPE_THRESHOLD = 120; // px
+const SWIPE_THRESHOLD = 120;
 
 export default function SwipeDeck() {
-  const [cards, setCards] = useState([]); // {id,url,name,breed,age,city,state,profileUrl}
+  const [cards, setCards] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
   const [likes, setLikes] = useState([]);
   const [passes, setPasses] = useState([]);
+  const [expandedId, setExpandedId] = useState(null); // NEW
 
-  // thread UI filters into this object later
   const query = useMemo(
     () => ({ location: "95112", distance: 50, limit: PAGE_SIZE, page }),
     [page]
   );
 
-  // fetch a page and append to the deck
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -31,16 +29,24 @@ export default function SwipeDeck() {
         const { dogs } = await DoglyApi.getPetfinderDogs(query);
         if (cancelled) return;
         const mapped = dogs
-          .filter(d => d.photoUrl) // basic quality filter
+          .filter(d => d.photoUrl)
           .map(d => ({
             id: d.id,
             url: d.photoUrl,
             name: d.name,
             breed: d.breed,
             age: d.age,
+            size: d.size,
+            gender: d.gender,
+            coat: d.coat,
+            color: d.color,
             city: d.city,
             state: d.state,
             profileUrl: d.url,
+            tags: d.tags,
+            attributes: d.attributes,
+            environment: d.environment,
+            description: d.description,
           }));
         setCards(prev => [...prev, ...mapped]);
         setErr(null);
@@ -53,32 +59,35 @@ export default function SwipeDeck() {
     return () => { cancelled = true; };
   }, [query]);
 
-  // auto-load next page when deck runs low
   useEffect(() => {
     if (!loading && cards.length <= 2) setPage(p => p + 1);
   }, [cards.length, loading]);
 
   const handleDecision = (id, decision) => {
+    setExpandedId(null);
     setCards(prev => prev.filter(c => c.id !== id));
     if (decision === "like") setLikes(prev => [...prev, id]);
     else setPasses(prev => [...prev, id]);
-    // TODO: persist to backend if you want
   };
 
   return (
     <div style={{ minHeight: 560, padding: 24, display: "grid", placeItems: "center" }}>
-      {/* card stack container */}
+      {/* stack */}
       <div style={{ position: "relative", width: CARD_W, height: CARD_H }}>
         {cards.map((card, i) => (
           <DogCard
             key={card.id}
             card={card}
             isFront={i === cards.length - 1}
-            onSwipe={(dir) => handleDecision(card.id, dir === "right" ? "like" : "pass")}
             indexFromTop={cards.length - 1 - i}
+            // disable swipe when expanded
+            isExpanded={expandedId === card.id}
+            onToggleExpand={() =>
+              setExpandedId(prev => (prev === card.id ? null : card.id))
+            }
+            onSwipe={dir => handleDecision(card.id, dir === "right" ? "like" : "pass")}
           />
         ))}
-
         {loading && cards.length === 0 && (
           <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
             Loading dogs…
@@ -86,34 +95,24 @@ export default function SwipeDeck() {
         )}
       </div>
 
-      {/* controls for keyboard/mouse users */}
+      {/* controls */}
       <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
         <button
           onClick={() => cards.length && handleDecision(cards.at(-1).id, "pass")}
-          style={btnStyle}
-        >
-          Nope
-        </button>
+          style={btn}
+        >Nope</button>
         <button
           onClick={() => cards.length && handleDecision(cards.at(-1).id, "like")}
-          style={btnStyle}
-        >
-          Like
-        </button>
+          style={btn}
+        >Like</button>
         {cards.length > 0 && (
-          <a
-            href={cards.at(-1).profileUrl}
-            target="_blank"
-            rel="noreferrer"
-            style={{ ...btnStyle, textDecoration: "none" }}
-          >
+          <a href={cards.at(-1).profileUrl} target="_blank" rel="noreferrer" style={{ ...btn, textDecoration: "none" }}>
             View
           </a>
         )}
       </div>
 
-      {/* tiny debug */}
-      <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7 }}>
+      <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7, color: "#111"}}>
         Likes: {likes.length} • Passes: {passes.length} • Page: {page}
       </div>
 
@@ -122,78 +121,206 @@ export default function SwipeDeck() {
   );
 }
 
-function DogCard({ card, isFront, indexFromTop, onSwipe }) {
+function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExpand }) {
   const x = useMotionValue(0);
   const rotateDrag = useTransform(x, [-150, 150], [-16, 16]);
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
 
-  // fan-out rotation for non-front cards
   const baseTilt = indexFromTop === 0 ? 0 : (indexFromTop % 2 ? 6 : -6);
   const rotate = useTransform(() => `${rotateDrag.get() + baseTilt}deg`);
 
+  const yOffset = Math.min(indexFromTop * 6, 18);
+  const scale = isFront ? 1 : 0.98;
+
   const handleDragEnd = () => {
+    if (isExpanded) return; // no swipe while expanded
     const dx = x.get();
     if (Math.abs(dx) > SWIPE_THRESHOLD) onSwipe(dx > 0 ? "right" : "left");
   };
 
-  // slight offset for stacked look
-  const yOffset = Math.min(indexFromTop * 6, 18);
-  const scale = isFront ? 1 : 0.98;
+  // Compact pills builder (filter empty)
+  const pills = [card.age, card.gender, card.size, card.color, card.coat].filter(Boolean);
+
+  // Derived text
+  const health = [
+    card.attributes?.shots_current ? "Vaccinations up to date" : null,
+    card.attributes?.spayed_neutered ? "Spayed/Neutered" : null,
+    card.attributes?.special_needs ? "Special needs" : null,
+  ].filter(Boolean).join(", ");
+  const goodWith = [
+    card.environment?.dogs ? "dogs" : null,
+    card.environment?.cats ? "cats" : null,
+    card.environment?.children ? "children" : null,
+  ].filter(Boolean).join(", ");
 
   return (
-    <motion.div
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: CARD_W,
-        height: CARD_H,
-        margin: "0 auto",
-        x,
-        opacity,
-        rotate,
-        borderRadius: 16,
-        boxShadow: isFront
-          ? "0 20px 25px rgba(0,0,0,.25), 0 8px 10px rgba(0,0,0,.15)"
-          : "0 10px 15px rgba(0,0,0,.12)",
-        background: "#fff",
-        overflow: "hidden",
-        userSelect: "none",
-      }}
-      animate={{ scale, y: yOffset }}
-      drag={isFront ? "x" : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      onDragEnd={handleDragEnd}
-    >
-      <img
-        src={card.url}
-        alt={card.name}
-        style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }}
-        onError={(e) => (e.currentTarget.style.display = "none")}
-      />
-      {/* gradient + details */}
-      <div style={{ position: "relative", height: CARD_H - 280 }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.2) 100%)",
-          }}
+    <>
+      {/* Card in stack */}
+      <motion.div
+        layout // enables smooth size/pos animations
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: CARD_W,
+          height: CARD_H,
+          margin: "0 auto",
+          x, opacity, rotate,
+          borderRadius: 18,
+          background: "#fff",
+          overflow: "hidden",
+          boxShadow: isFront
+            ? "0 24px 30px rgba(0,0,0,.25), 0 10px 12px rgba(0,0,0,.15)"
+            : "0 10px 15px rgba(0,0,0,.12)",
+          cursor: "pointer",
+          userSelect: "none",
+        }}
+        animate={{ scale, y: yOffset }}
+        drag={isFront && !isExpanded ? "x" : false}
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={handleDragEnd}
+        onClick={onToggleExpand}
+      >
+        <img
+          src={card.url}
+          alt={card.name}
+          style={{ width: "100%", height: 240, objectFit: "cover", display: "block" }}
+          onError={e => (e.currentTarget.style.display = "none")}
         />
-        <div style={{ position: "absolute", left: 12, right: 12, bottom: 12, color: "#111" }}>
-          <div style={{ fontSize: 18, fontWeight: 700 }}>{card.name}</div>
-          <div style={{ fontSize: 14, opacity: 0.8 }}>
-            {card.breed} • {card.age}
-            {(card.city || card.state) && " • "}
-            {[card.city, card.state].filter(Boolean).join(", ")}
+        <div style={{ padding: 12 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#111" }}>{card.name}</div>
+          <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 8 }}>
+            {card.breed} • {[card.city, card.state].filter(Boolean).join(", ")}
           </div>
+
+          <div style={{ borderTop: "1px solid #eee", margin: "8px 0" }} />
+
+          {/* pills row (only if present) */}
+          {pills.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
+              {pills.map(p => <Chip key={p}>{p}</Chip>)}
+            </div>
+          )}
+
+          {/* condensed About (always non-empty lines only) */}
+          {("house_trained" in (card.attributes || {})) && (
+            <Line><b>House-trained</b>: {card.attributes.house_trained ? "Yes" : "No"}</Line>
+          )}
+          {health && <Line><b>Health</b>: {health}</Line>}
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Expanded overlay */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: "fixed", inset: 0, background: "rgba(0,0,0,.45)",
+              display: "grid", placeItems: "center", zIndex: 50
+            }}
+            onClick={onToggleExpand}
+          >
+            <motion.div
+              layout
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              style={{
+                width: 360, maxWidth: "92vw", maxHeight: "88vh",
+                background: "#fff", borderRadius: 18, overflow: "auto",
+                boxShadow: "0 24px 30px rgba(0,0,0,.35)",
+              }}
+            >
+              <img
+                src={card.url}
+                alt={card.name}
+                style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }}
+              />
+              <div style={{ padding: 16 }}>
+                <div style={{ fontSize: 24, fontWeight: 800, color: "#111" }}>{card.name}</div>
+                <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 12 }}>
+                  {card.breed} • {[card.city, card.state].filter(Boolean).join(", ")}
+                </div>
+
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                  {pills.map(p => <Chip key={p}>{p}</Chip>)}
+                </div>
+
+                <Hr />
+
+                {card.tags?.length ? (
+                  <Section title="Characteristics">
+                    {card.tags.join(", ")}
+                  </Section>
+                ) : null}
+
+                {card.coat ? (
+                  <Section title="Coat length">{card.coat}</Section>
+                ) : null}
+
+                {"house_trained" in (card.attributes || {}) ? (
+                  <Section title="House-trained">{card.attributes.house_trained ? "Yes" : "No"}</Section>
+                ) : null}
+
+                {health && <Section title="Health">{health}</Section>}
+
+                {goodWith && <Section title="Good in a home with">{goodWith}</Section>}
+
+                {card.description && (
+                  <>
+                    <Hr />
+                    <Section title="About">{card.description}</Section>
+                  </>
+                )}
+
+                <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                  <a href={card.profileUrl} target="_blank" rel="noreferrer" style={btn}>
+                    View on Petfinder
+                  </a>
+                  <button onClick={onToggleExpand} style={btn}>Close</button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
-const btnStyle = {
+function Chip({ children }) {
+  return (
+    <span style={{
+      padding: "4px 10px",
+      border: "1px solid #e5e7eb",
+      borderRadius: 999,
+      fontSize: 12,
+      background: "#f3f4f6",
+      color: "#333",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+const Line = ({ children }) => (
+  <div style={{ fontSize: 12, lineHeight: 1.5, color: "#333" }}>{children}</div>
+);
+
+const Section = ({ title, children }) => (
+  <div style={{ marginBottom: 10 }}>
+    <div style={{ fontWeight: 700, fontSize: 12, letterSpacing: .3, color: "#444" }}>{title}</div>
+    <div style={{ fontSize: 13, color: "#222" }}>{children}</div>
+  </div>
+);
+
+const Hr = () => <div style={{ height: 1, background: "#eee", margin: "10px 0" }} />;
+
+const btn = {
   border: "1px solid #ddd",
   padding: "8px 14px",
   borderRadius: 999,
