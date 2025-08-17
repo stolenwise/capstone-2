@@ -42,31 +42,30 @@ import NotFound from "./components/notfound";
 
 
 function App() {
-  const [token, setToken] = useLocalStorage("dogly-token", null);
+  const [token, setToken] = useLocalStorage("token", null);
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
 
-  useEffect(() => {
-    async function loadUser() {
-      setInfoLoaded(false);
-      try {
-        if (token) {
-          DoglyApi.token = token;
-          const { username } = jwtDecode(token);
-          const user = await DoglyApi.getCurrentUser(username);
-          setCurrentUser(user);
-        } else {
-          setCurrentUser(null);
-        }
-      } catch (err) {
-        console.error("loadUser failed", err);
-        setCurrentUser(null);
-      } finally {
-        setInfoLoaded(true);
-      }
+// keep DoglyApi in sync
+useEffect(() => {
+  DoglyApi.token = token || null;
+
+  async function loadUser() {
+    setInfoLoaded(false);                // start loading
+    try {
+      if (!token) { setCurrentUser(null); return; }
+      const { username } = jwtDecode(token);
+      const user = await DoglyApi.getCurrentUser(username); // returns res.user
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("loadUser failed", err);
+      setCurrentUser(null);
+    } finally {
+      setInfoLoaded(true);               // done loading
     }
-    loadUser();
-  }, [token]);
+  }
+  loadUser();
+}, [token]);
 
   async function signup(data) {
     const t = await DoglyApi.signup(data);

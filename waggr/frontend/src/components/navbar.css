@@ -18,6 +18,22 @@
     border-radius: 6px;
     padding: 5px 10px;
   }
+
+ /* Center stays centered regardless */
+.Navbar-center {
+  flex: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.Logo-img {
+  max-height: 75px;
+  max-width: 150px;
+  object-fit: contain;
+}
   
   .Navbar-right {
     display: flex;
