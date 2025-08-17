@@ -7,6 +7,13 @@ const CARD_H = 520;          // give the whole card more vertical room
 const IMG_H  = 320;          // photo height for compact card
 const PAGE_SIZE = 12;
 const SWIPE_THRESHOLD = 120;
+const SHADOWS = [
+  "0 24px 32px rgba(0,0,0,.28), 0 10px 12px rgba(0,0,0,.18)", // front
+  "0 12px 18px rgba(0,0,0,.16)",
+  "0 6px 10px rgba(0,0,0,.10)",
+  "0 2px 4px rgba(0,0,0,.06)",
+  "none"
+];
 
 export default function SwipeDeck() {
   const [cards, setCards] = useState([]);
@@ -98,15 +105,15 @@ export default function SwipeDeck() {
       </div>
 
       {/* controls */}
-      <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+      <div style={{ marginTop: 40, display: "flex", gap: 8 }}>
         <button
           onClick={() => cards.length && handleDecision(cards.at(-1).id, "pass")}
           style={btn}
-        >Nope</button>
+        >Nope ❎</button>
         <button
           onClick={() => cards.length && handleDecision(cards.at(-1).id, "like")}
           style={btn}
-        >Like</button>
+        >Like ❤️</button>
         {cards.length > 0 && (
           <a href={cards.at(-1).profileUrl} target="_blank" rel="noreferrer" style={{ ...btn, textDecoration: "none" }}>
             View
@@ -114,7 +121,7 @@ export default function SwipeDeck() {
         )}
       </div>
 
-      <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7, color: "#111"}}>
+      <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7, color: "#fff"}}>
         Likes: {likes.length} • Passes: {passes.length} • Page: {page}
       </div>
 
@@ -136,6 +143,9 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
   const scale = isFront ? 1 : 0.98;
 
   const photos = (card.photos && card.photos.length ? card.photos : [card.url]).filter(Boolean);
+
+  const depth = Math.min(indexFromTop, SHADOWS.length - 1);
+  const shadow = SHADOWS[depth];
 
     const nextPhoto = (e) => {
       e.stopPropagation();
@@ -183,9 +193,7 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
           borderRadius: 18,
           background: "#fff",
           overflow: "hidden",
-          boxShadow: isFront
-            ? "0 24px 30px rgba(0,0,0,.25), 0 10px 12px rgba(0,0,0,.15)"
-            : "0 10px 15px rgba(0,0,0,.12)",
+          boxShadow: shadow,
           cursor: "pointer",
           userSelect: "none",
         }}
