@@ -356,7 +356,9 @@ function DogCard({ card, isFront, indexFromTop, onSwipe, isExpanded, onToggleExp
                 {card.description && (
                   <>
                     <Hr />
-                    <Section title="About">{card.description}</Section>
+                    <Section title="About">
+                      <div className="about-section">{card.description}</div>
+                      </Section>
                   </>
                 )}
 

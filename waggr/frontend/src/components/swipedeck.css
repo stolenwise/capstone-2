@@ -1,0 +1,5 @@
+.about-section {
+    max-height: 150px;   /* adjust to how tall you want it */
+    overflow-y: auto;    /* enables scrolling */
+    white-space: pre-wrap; /* keeps line breaks */
+  }

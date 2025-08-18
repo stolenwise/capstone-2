@@ -28,3 +28,8 @@ body {
   margin-bottom: 15vh;
 }
 
+.about-section {
+  max-height: 200px;   /* pick a height you like */
+  overflow-y: auto;
+  white-space: pre-wrap;  /* keep line breaks nice */
+}
