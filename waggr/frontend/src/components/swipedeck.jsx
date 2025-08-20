@@ -37,7 +37,7 @@ export default function SwipeDeck() {
         const { dogs } = await DoglyApi.getPetfinderDogs(query);
         if (cancelled) return;
         const mapped = dogs
-          .filter(d => d.photoUrl)
+          .filter(d => (d.photos?.length || d.photoUrl))
           .map(d => ({
             id: d.id,
             url: d.photoUrl,                 // primary (still used elsewhere)

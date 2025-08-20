@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NavBar from './components/NavBar';
 import Shelters from './components/Shelters';
-import Dogs from './components/Dogs';
+
+import Swipe from "./components/Swipe/Swipe";
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
@@ -16,7 +17,8 @@ function DoglyRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/shelters" element={<Shelters />} />
-      <Route path="/dogs" element={<Dogs />} />
+      <Route path="/dogs" element={<Swipe />} />
+      <Route path="/swipe" element={<Navigate to="/dogs" replace />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />

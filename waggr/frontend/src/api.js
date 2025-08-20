@@ -27,6 +27,24 @@ class DoglyApi {
     }
   }
 
+
+    // Call the Petfinder proxy, not /dogs
+    static async getPetfinderDogs(params = {}) {
+      // --- flip this to false once your backend /pf is wired ---
+      const USE_MOCK = false;
+  
+      if (USE_MOCK) {
+        const resp = await fetch("/mock/dogs.json");
+        if (!resp.ok) throw new Error("mock dogs failed");
+        return resp.json();  // { dogs, pagination }
+      }
+  
+      return this.request("pf/dogs", params); // expects { dogs, pagination }
+    }
+ 
+  
+
+
   /** ---------- Shelters ---------- */
 
   // In your mock server, shelter route is /shelters/:id (numeric),

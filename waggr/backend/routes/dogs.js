@@ -50,25 +50,27 @@ router.post("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/", async function (req, res, next) {
-  const q = req.query;
-  // arrive as strings from querystring, but we want as int/bool
-  if (q.minSalary !== undefined) q.minSalary = +q.minSalary;
-  q.hasEquity = q.hasEquity === "true";
-
-  try {
-    const validator = jsonschema.validate(q, dogSearchSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
+  router.get("/", async function (req, res, next) {
+    // Accept filters you support; ignore the old Jobly ones.
+    const q = {
+      name: req.query.name,
+      breed: req.query.breed,
+      minAge: req.query.minAge !== undefined ? +req.query.minAge : undefined,
+      maxAge: req.query.maxAge !== undefined ? +req.query.maxAge : undefined,
+    };
+  
+    try {
+      // (Temporarily) skip Jobly search schema or replace it with a dogSearch schema that matches q.
+      // const validator = jsonschema.validate(q, dogSearchSchema);
+      // if (!validator.valid) throw new BadRequestError(validator.errors.map(e => e.stack));
+  
+      const dogs = await Dog.findAll(q);
+      return res.json({ dogs });
+    } catch (err) {
+      return next(err);
     }
-
-    const dogs = await Dog.findAll(q);
-    return res.json({ dogs });
-  } catch (err) {
-    return next(err);
-  }
-});
+  });
+  
 
 /** GET /[dogId] => { dog }
  *

@@ -12,6 +12,8 @@ const authRoutes = require("./routes/auth");
 const sheltersRoutes = require("./routes/shelters");
 const usersRoutes = require("./routes/users");
 const dogsRoutes = require("./routes/dogs");
+const pfRoutes = require("./routes/pf");
+
 
 const morgan = require("morgan");
 
@@ -26,6 +28,8 @@ app.use("/auth", authRoutes);
 app.use("/shelters", sheltersRoutes);
 app.use("/users", usersRoutes);
 app.use("/dogs", dogsRoutes);
+app.use("/pf", pfRoutes);
+
 
 
 /** Handle 404 errors -- this matches everything */
