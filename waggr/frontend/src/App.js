@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // These two likely exist as PascalCase (adjust if needed)
 import NavBar from "./components/NavBar";
@@ -156,7 +156,7 @@ useEffect(() => {
         <Route element={<RequireAuth currentUser={currentUser} infoLoaded={infoLoaded} />}>
           <Route path="/profile" element={<ProfileView currentUser={currentUser} />} />
           <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} />  <Route path="/shelters" element={<ShelterList />} />
-          <Route path="/dogs" element={<DogList hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
+          <Route path="/dogs" element={<Navigate to="/swipe" replace />}/>
           <Route path="/shelters/:handle" element={<ShelterDetails hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
           <Route path="/dogs/:id" element={<DogDetails />} />
           <Route path="/pf-test" element={<PetfinderTest />} />
