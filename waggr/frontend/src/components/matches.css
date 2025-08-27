@@ -29,6 +29,12 @@
   .match-card .info h3 { margin: 0 0 4px; }
   .match-card .info p { margin: 2px 0; color: #555; }
   .match-card .info .shelter { font-weight: 600; }
+
+  .match-card .info h3 {
+    margin: 0 0 4px;
+    color: #000;
+    font-weight: 700;
+  }
   
   .book-card {
     background: #fff;
