@@ -15,6 +15,23 @@ const SHADOWS = [
   "none"
 ];
 
+function saveLikedDog(dog) {
+  const key = "waggr_likes";
+  const pick = d => ({
+    id: d.id,
+    name: d.name,
+    breed: d.breed || d.breeds?.primary || "Unknown",
+    city: d.city || d.contact?.address?.city || "",
+    state: d.state || d.contact?.address?.state || "",
+    shelter: d.organization_name || d.organization_id || d._organization?.name || "Shelter",
+    photo: (d.photos && d.photos[0]?.medium) || d.url || d.photoUrl || ""
+  });
+  const current = JSON.parse(localStorage.getItem(key) || "[]");
+  const exists = current.some(x => x.id === dog.id);
+  const next = exists ? current : [pick(dog), ...current];
+  localStorage.setItem(key, JSON.stringify(next));
+}
+
 export default function SwipeDeck() {
   const [cards, setCards] = useState([]);
   const [page, setPage] = useState(1);
@@ -72,11 +89,15 @@ export default function SwipeDeck() {
     if (!loading && cards.length <= 2) setPage(p => p + 1);
   }, [cards.length, loading]);
 
-  const handleDecision = (id, decision) => {
+  const handleDecision = (card, decision) => {
     setExpandedId(null);
-    setCards(prev => prev.filter(c => c.id !== id));
-    if (decision === "like") setLikes(prev => [...prev, id]);
-    else setPasses(prev => [...prev, id]);
+    setCards(prev => prev.filter(c => c.id !== card.id));
+   if (decision === "like") {
+     setLikes(prev => [...prev, card.id]);
+     saveLikedDog(card);
+   } else {
+     setPasses(prev => [...prev, card.id]);
+   }
   };
 
   return (
@@ -94,7 +115,7 @@ export default function SwipeDeck() {
             onToggleExpand={() =>
               setExpandedId(prev => (prev === card.id ? null : card.id))
             }
-            onSwipe={dir => handleDecision(card.id, dir === "right" ? "like" : "pass")}
+            onSwipe={dir => handleDecision(card, dir === "right" ? "like" : "pass")}
           />
         ))}
         {loading && cards.length === 0 && (
@@ -107,11 +128,11 @@ export default function SwipeDeck() {
       {/* controls */}
       <div style={{ marginTop: 40, display: "flex", gap: 8 }}>
         <button
-          onClick={() => cards.length && handleDecision(cards.at(-1).id, "pass")}
+          onClick={() => cards.length && handleDecision(cards.at(-1), "pass")}
           style={btn}
         >Nope ❎</button>
         <button
-          onClick={() => cards.length && handleDecision(cards.at(-1).id, "like")}
+          onClick={() => cards.length && handleDecision(cards.at(-1), "like")}
           style={btn}
         >Like ❤️</button>
         {cards.length > 0 && (

@@ -14,6 +14,7 @@ import DogDetails from "./components/Dogs/dogdetails";
 import PetfinderTest from "./components/petfindertest";
 import SwipeCards from "./components/swipecard";
 import SwipeDeck from "./components/swipedeck";
+import Matches from "./components/matches";
 
 
 
@@ -160,6 +161,7 @@ useEffect(() => {
           <Route path="/shelters/:handle" element={<ShelterDetails hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
           <Route path="/dogs/:id" element={<DogDetails />} />
           <Route path="/pf-test" element={<PetfinderTest />} />
+          <Route path="matches" element={<Matches />} />
 
           <Route path="/swipe" element={<SwipeDeck />} />
         </Route>
