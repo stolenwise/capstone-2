@@ -23,6 +23,7 @@ function Navbar({ currentUser, logout }) {
       <div className="Navbar-right">
         <Link to="/shelters">Shelters</Link>
         <Link to="/dogs">Dogs</Link>
+        <Link to="/matches">Matches</Link>
 
         {currentUser ? (
           <div className="Navbar-user">
