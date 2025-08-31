@@ -16,7 +16,7 @@ function LoginForm({ login }) {
     e.preventDefault();
     try {
       await login(form);
-      navigate("/shelters"); // start on /shelters route
+      navigate("/"); // start on / route
     } catch (err) {
       setError(err);
     }

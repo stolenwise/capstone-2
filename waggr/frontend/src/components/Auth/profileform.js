@@ -3,14 +3,18 @@ import { useNavigate } from "react-router-dom";
 import "./profileform.css";
 
 export default function ProfileForm({ currentUser, updateProfile }) {
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  // Check if currentUser has a nested user object
+  const user = currentUser?.user || currentUser;
+  
   const INITIAL = {
-    firstName: currentUser.firstName || "",
-    lastName:  currentUser.lastName  || "",
-    email:     currentUser.email     || "",
+    firstName: user?.firstName || "",
+    lastName:  user?.lastName  || "",
+    email:     user?.email     || "",
     password: "" // current password required to confirm changes
   };
+  
   const [formData, setFormData] = useState(INITIAL);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -47,15 +51,12 @@ const navigate = useNavigate();
     }
   }
 
-
-
-
   return (
     <div className="ProfilePage">
       <h3>Edit Profile</h3>
       <form className="ProfileForm" onSubmit={handleSubmit}>
         <label>Username</label>
-        <input value={currentUser.username} disabled />
+        <input value={user?.username || ""} disabled />
 
         <label>First Name</label>
         <input name="firstName" value={formData.firstName} onChange={handleChange} />

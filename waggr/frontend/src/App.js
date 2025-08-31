@@ -7,12 +7,6 @@ import NavBar from "./components/NavBar";
 import ApiTest from "./components/ApiTest";
 
 // These four appear to be lowercase on disk
-import ShelterList from "./components/Shelter/shelterlist";
-import ShelterDetails from "./components/Shelter/shelterdetails";
-import DogList from "./components/Dogs/doglist";
-import DogDetails from "./components/Dogs/dogdetails";
-import PetfinderTest from "./components/petfindertest";
-import SwipeCards from "./components/swipecard";
 import SwipeDeck from "./components/swipedeck";
 import Matches from "./components/matches";
 
@@ -98,15 +92,17 @@ useEffect(() => {
     localStorage.removeItem("waggr_likes");
   };
 
-  async function updateProfile(formData) {
+  const updateProfile = async (profileData) => {
     try {
-      // username comes from currentUser
-      const updated = await DoglyApi.saveProfile(currentUser.username, formData);
-      setCurrentUser(updated);            // reflect changes app-wide
+      const username = currentUser?.user?.username || currentUser?.username;
+      const updatedUser = await DoglyApi.saveProfile(username, profileData);
+      
+      // Update currentUser state with the new data
+      setCurrentUser(updatedUser);
       return { success: true };
-    } catch (errs) {
-      // errs is an array from your request helper
-      return { success: false, errs };
+    } catch (error) {
+      console.error("Update profile error:", error);
+      return { success: false, errs: error };
     }
   }
 
@@ -159,7 +155,7 @@ useEffect(() => {
           {/* protected routes */}
         <Route element={<RequireAuth currentUser={currentUser} infoLoaded={infoLoaded} />}>
           <Route path="/profile" element={<ProfileView currentUser={currentUser} />} />
-          <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} />  <Route path="/shelters" element={<ShelterList />} />
+          <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} /> 
           <Route path="/dogs" element={<Navigate to="/swipe" replace />}/>
           <Route path="matches" element={<Matches />} />
 

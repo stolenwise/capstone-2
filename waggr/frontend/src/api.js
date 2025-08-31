@@ -64,10 +64,12 @@ class DoglyApi {
 
   /** ----------- Auth ------------- */
 
-  static async login(credentials) {
-    const res = await this.request("auth/token", credentials, "post");
-    return res.token;
-  }
+// In your login function
+static async login(credentials) {
+  const res = await this.request("auth/token", credentials, "post");
+  this.token = res.token; // Make sure this is set
+  return res.token;
+}
 
   static async signup(data) {
     const res = await this.request("auth/register", data, "post");
@@ -83,6 +85,7 @@ class DoglyApi {
   // NOTE: saveProfile is NOT implemented in the mock server.
   // Keep this here for future real backend:
   static async saveProfile(username, data) {
+    // The token should be automatically included via the headers
     const res = await this.request(`users/${username}`, data, "patch");
     return res.user;
   }
@@ -98,15 +101,6 @@ class DoglyApi {
     );
     // mock returns { booked: newId }
     return res.booked;
-  }
-
-  /** ------ Petfinder proxy ------- */
-
-  // GET /pf/dogs proxied by backend (uses backend env secrets)
-  static async getPetfinderDogs(params = {}) {
-    const res = await this.request("pf/dogs", params, "get");
-    // { dogs: [...], pagination: {...} }
-    return res;
   }
 }
 
