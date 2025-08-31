@@ -89,10 +89,14 @@ useEffect(() => {
     setCurrentUser(user);
   }
   
-  function logout() {
+  const logout = () => {
     setToken(null);
     setCurrentUser(null);
-  }
+  };
+
+  const clearMatches = () => {
+    localStorage.removeItem("waggr_likes");
+  };
 
   async function updateProfile(formData) {
     try {
@@ -143,7 +147,7 @@ useEffect(() => {
   return (
     <div className="App">
       <BrowserRouter>
-        {infoLoaded && <NavBar currentUser={currentUser} logout={logout} />}
+        {infoLoaded && <NavBar currentUser={currentUser} logout={logout} clearMatches={clearMatches} />}
         <main>
         <Routes>
           {/* public routes */}

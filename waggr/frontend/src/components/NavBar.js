@@ -3,7 +3,13 @@ import { Link } from "react-router-dom";
 import "./navbar.css";
 import logo from "../assets/waggr-logo-5.png";
 
-function Navbar({ currentUser, logout }) {
+function Navbar({ currentUser, logout, clearMatches}) {
+
+  const handleLogout = () => {
+    logout(); // Your existing logout function
+    clearMatches(); // Clear matches when logging out
+  };
+
   return (
     <nav className="Navbar">
 
@@ -32,7 +38,7 @@ function Navbar({ currentUser, logout }) {
                 {currentUser?.username ?? currentUser?.user?.username ?? ""}
               </Link>
             </span>
-            <button className="Navbar-logout" onClick={logout}>Log out</button>
+            <button className="Navbar-logout" onClick={handleLogout}>Log out</button>
           </div>
         ) : (
           <>
