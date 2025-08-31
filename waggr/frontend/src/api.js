@@ -41,27 +41,8 @@ class DoglyApi {
   
       return this.request("pf/dogs", params); // expects { dogs, pagination }
     }
+
  
-  
-
-
-  /** ---------- Shelters ---------- */
-
-  // In your mock server, shelter route is /shelters/:id (numeric),
-  // not handle. Adjust as needed if you later add handles.
-  static async getShelter(id) {
-    const res = await this.request(`shelters/${id}`);
-    return res.shelter; // { id, name, ... }
-  }
-
-  // Supports ?nameLike= and ?city= per mock-server.js
-  static async getShelters(filters = {}) {
-    const params = {};
-    if (filters.nameLike) params.nameLike = filters.nameLike;
-    if (filters.city) params.city = filters.city;
-    const res = await this.request("shelters", params);
-    return res.shelters; // array
-  }
 
   /** ------------ Dogs ------------- */
 
@@ -96,7 +77,7 @@ class DoglyApi {
   static async getCurrentUser(username) {
     const res = await this.request(`users/${username}`);
     // mock returns { user, bookings }
-    return res;
+    return res.user;
   }
 
   // NOTE: saveProfile is NOT implemented in the mock server.

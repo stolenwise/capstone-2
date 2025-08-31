@@ -3,8 +3,9 @@ import "./profileview.css";
 
 export default function ProfileView({ currentUser }) {
   console.log("Current User:", currentUser); // Add this line
-  const { username, firstName, lastName, email } = currentUser || {};
-
+  // Check if currentUser has a nested user object
+  const user = currentUser?.user || currentUser;
+  const { username, firstName, lastName, email } = user || {};
   return (
     <div className="ProfileViewPage">
       <h3>Your Profile</h3>
