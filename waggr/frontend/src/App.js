@@ -154,7 +154,6 @@ useEffect(() => {
           <Route path="/login" element={<LoginForm login={login} />} />
           <Route path="/signup" element={<SignupForm signup={signup} />} />
           <Route path="/" element={<Home currentUser={currentUser} />} />
-          <Route path="/test" element={<ApiTest />} />
           <Route path="*" element={<NotFound/>} />
 
           {/* protected routes */}
@@ -162,9 +161,6 @@ useEffect(() => {
           <Route path="/profile" element={<ProfileView currentUser={currentUser} />} />
           <Route path="/edit-profile" element={<ProfileForm currentUser={currentUser} updateProfile={updateProfile} />} />  <Route path="/shelters" element={<ShelterList />} />
           <Route path="/dogs" element={<Navigate to="/swipe" replace />}/>
-          <Route path="/shelters/:handle" element={<ShelterDetails hasAppliedToDog={hasAppliedToDog} applyToDog={applyToDog} />}/>
-          <Route path="/dogs/:id" element={<DogDetails />} />
-          <Route path="/pf-test" element={<PetfinderTest />} />
           <Route path="matches" element={<Matches />} />
 
           <Route path="/swipe" element={<SwipeDeck />} />

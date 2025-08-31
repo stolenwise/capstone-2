@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import "./profileview.css";
 
 export default function ProfileView({ currentUser }) {
+  console.log("Current User:", currentUser); // Add this line
   const { username, firstName, lastName, email } = currentUser || {};
 
   return (
