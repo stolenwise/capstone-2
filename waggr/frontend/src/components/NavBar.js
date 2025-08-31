@@ -1,9 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./navbar.css";
-import logo from "../assets/waggr-logo-5.png";
+import logo from "../assets/waggr-logo-5-3E00B8.png";
 
 function Navbar({ currentUser, logout, clearMatches}) {
+  const styles = {
+    brand: {
+      display: "flex",
+      alignItems: "center",    // vertical alignment
+      gap: 8,                  // spacing between logo and text
+    },
+    logo: {
+      width: 50,
+      height: 50,
+      fill: "#3E00B8",         // works if SVG
+      color: "#3E00B8",        // fallback for icon fonts
+    },
+    brandText: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#3E00B8",        // your purple
+    }
+  };
+
 
   const handleLogout = () => {
     logout(); // Your existing logout function
@@ -15,14 +34,11 @@ function Navbar({ currentUser, logout, clearMatches}) {
 
       {/* Left side */}
       <div className="Navbar-left">
-        <Link to="/" className="Navbar-logo">Waggr</Link>
-      </div>
-
-      {/* Center logo */}
-      <div className="Navbar-center">
-        <Link to="/">
-          <img src={logo} alt="Waggr Logo" className="Logo-img" />
-        </Link>
+        <Link to="/" className="Navbar-logo">
+        <div style={styles.brand}>
+        <img src={logo} alt="Waggr logo" style={styles.logo} />
+        <span style={styles.brandText}>Waggr</span>
+        </div></Link>
       </div>
 
       {/* Right side */}

@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
+    padding: 6px 16px;
     background-color: white;
     border-bottom: 1px solid #eee;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -14,8 +14,8 @@
     font-weight: bold;
     color: #3603d1;
     text-decoration: none;
-    
-    border-radius: 6px;
+    margin: 0;
+    border-radius: 0px;
     padding: 5px 10px;
   }
 
@@ -31,8 +31,9 @@
 
 .Logo-img {
   max-height: 75px;
-  max-width: 150px;
-  object-fit: contain;
+  width: auto;
+  display: block;
+  color: purple;
 }
   
   .Navbar-right {

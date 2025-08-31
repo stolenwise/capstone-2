@@ -90,7 +90,7 @@ function EmptyState() {
   return (
     <div style={styles.empty}>
       <p style={{ margin: 0 }}>No matches yet — go like some pups!</p>
-      <a href="/dogs" style={styles.linkBtn}>Go to Swipe</a>
+      <a href="/dogs" style={styles.linkBtn}>Let's get waggin'!</a>
     </div>
   );
 }
