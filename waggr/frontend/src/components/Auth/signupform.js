@@ -25,7 +25,7 @@ function SignupForm({ signup }) {
     try {
       await signup(formData);             // calls App.signup -> sets token
       setFormErrors([]);
-      navigate("/shelters");             // optional success redirect
+      navigate("/");             // optional success redirect
     } catch (errs) {
       // errs is an array from your api helper
       setFormErrors(errs);

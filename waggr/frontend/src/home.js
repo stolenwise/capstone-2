@@ -21,7 +21,7 @@ export default function Home({ currentUser }) {
     <div className="Home">
       {currentUser ? (
         <div>
-          <h2>Welcome back, {currentUser.firstName || currentUser.username}!</h2>
+          <h2>Welcome, {currentUser.firstName || currentUser.username}!</h2>
           <p>It's a beautiful day to walk a dog.🐕☀️</p>
           <p><a href="/dogs" style={styles.linkBtn}>Let's get waggin'!</a></p>
           <div style={styles.empty}></div>
