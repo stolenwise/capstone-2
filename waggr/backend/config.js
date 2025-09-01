@@ -5,9 +5,8 @@ const PORT = +process.env.PORT || 3001;
 const BCRYPT_WORK_FACTOR = process.env.BCRYPT_WORK_FACTOR ? +process.env.BCRYPT_WORK_FACTOR : 12;
 
 function getDatabaseUri() {
-  return (process.env.NODE_ENV === "test")
-    ? process.env.DATABASE_TEST_URL || "postgresql:///waggr_test"
-    : process.env.DATABASE_URL || "postgresql:///waggr";
+  // Always use waggr database, even for tests
+  return process.env.DATABASE_URL || "postgresql:///waggr";
 }
 
 module.exports = {
