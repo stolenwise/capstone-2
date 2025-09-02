@@ -1,4 +1,5 @@
 // Home.js
+import { Link } from "react-router-dom";
 export default function Home({ currentUser }) {
   const styles = {
     linkBtn: {
@@ -23,7 +24,9 @@ export default function Home({ currentUser }) {
         <div>
           <h2>Welcome, {currentUser.firstName || currentUser.username}!</h2>
           <p>It's a beautiful day to walk a dog.🐕☀️</p>
-          <p><a href="/swipe" style={styles.linkBtn}>Let's get waggin'!</a></p>
+          <p><Link to="/swipe" style={styles.linkBtn}>
+            Let's get waggin'!
+          </Link></p>
           <div style={styles.empty}></div>
         </div>
       ) : (
