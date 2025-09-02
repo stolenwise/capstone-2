@@ -23,7 +23,7 @@ export default function Home({ currentUser }) {
         <div>
           <h2>Welcome, {currentUser.firstName || currentUser.username}!</h2>
           <p>It's a beautiful day to walk a dog.🐕☀️</p>
-          <p><a href="/dogs" style={styles.linkBtn}>Let's get waggin'!</a></p>
+          <p><a href="/swipe" style={styles.linkBtn}>Let's get waggin'!</a></p>
           <div style={styles.empty}></div>
         </div>
       ) : (
