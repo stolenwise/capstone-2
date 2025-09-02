@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || ""; // empty => use proxy
+const BASE_URL = "https://waggr-dog-walking-matchmaker.onrender.com";
 
 
 /** API Class.
