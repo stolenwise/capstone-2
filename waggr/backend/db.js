@@ -1,23 +1,12 @@
-"use strict";
-/** Database setup for dogly. */
-const { Client } = require("pg");
-const { getDatabaseUri } = require("./config");
+const { Client } = require('pg');
+require('dotenv').config();
 
-let db;
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
-if (process.env.NODE_ENV === "production") {
-  db = new Client({
-    connectionString: getDatabaseUri(),
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
-} else {
-  db = new Client({
-    connectionString: getDatabaseUri()
-  });
-}
-
-db.connect();
-
-module.exports = db;
+client.connect();
+module.exports = client;

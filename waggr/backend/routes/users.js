@@ -11,7 +11,7 @@ const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
-
+const { supabase } = require ("../db/supabase.js");
 const router = express.Router();
 
 
@@ -69,15 +69,18 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin or same user-as-:username
  **/
 
-router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-  try {
-    const user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
-  }
-});
+router.get('/:username', async (req, res) => {
+  const { username } = req.params;
+  
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('username', username)
+    .single();
 
+  if (error) return res.status(404).json({ error: error.message });
+  res.json({ user });
+});
 
 /** PATCH /[username] { user } => { user }
  *
