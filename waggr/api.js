@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = "https://waggr-dog-walking-matchmaker.onrender.com";
+const BASE_URL =
+  process.env.REACT_APP_BASE_URL || "http://localhost:3001"; // only used when running CRA dev server
+
+export const api = axios.create({ baseURL: BASE_URL });
 
 
 /** API Class.
